@@ -5,36 +5,90 @@ using Microsoft.Xna.Framework.Input;
 
 namespace ConstructEngine
 {
-    public struct EngineConfig
+    /// <summary>
+    /// Global engine configuration container.
+    /// </summary>
+    public record class EngineConfig
     {
-        public string Title;
-        public int VirtualWidth;
-        public int VirtualHeight;
-        public bool Fullscreen;
-        public bool IntegerScaling;
-        public bool AllowUserResizing;
-        public bool IsBorderless;
-        public bool IsFixedTimeStep;
-        public bool SynchronizeWithVerticalRetrace;
-        public bool ExitOnEscape;
-        public string FontPath;
-        public string GumProject;
+        /// <summary>
+        /// Title of the game window.
+        /// Default: "My Game"
+        /// </summary>
+        public string Title = "My Game";
 
-        public static EngineConfig BaseConfig => new EngineConfig
-        {
-            Title = "My Game",
-            VirtualWidth = 640,
-            VirtualHeight = 360,
-            Fullscreen = true,
-            IntegerScaling = true,
-            AllowUserResizing = true,
-            IsBorderless = true,
-            IsFixedTimeStep = false,
-            SynchronizeWithVerticalRetrace = true,
-            FontPath = null,
-            GumProject = null,
-        };
+        /// <summary>
+        /// Internal render width in pixels (before scaling).
+        /// Default: 640
+        /// </summary>
+        public int VirtualWidth = 640;
+
+        /// <summary>
+        /// Internal render height in pixels (before scaling).
+        /// Default: 360
+        /// </summary>
+        public int VirtualHeight = 360;
+
+        /// <summary>
+        /// Whether the game starts in fullscreen mode.
+        /// Default: true
+        /// </summary>
+        public bool Fullscreen = true;
+
+        /// <summary>
+        /// Whether the image is scaled using only integer values
+        /// to preserve pixel accuracy.
+        /// Default: true
+        /// </summary>
+        public bool IntegerScaling = true;
+
+        /// <summary>
+        /// Whether the user can resize the window border.
+        /// Default: true
+        /// </summary>
+        public bool AllowUserResizing = true;
+
+        /// <summary>
+        /// Removes the window border/title bar entirely.
+        /// Default: true
+        /// </summary>
+        public bool IsBorderless = true;
+
+        /// <summary>
+        /// If true, the engine updates as fast as possible.
+        /// If false, updates are fixed to 60 per second.
+        /// Default: false
+        /// </summary>
+        public bool IsFixedTimeStep = false;
+
+        /// <summary>
+        /// If true, V-Sync is enabled to prevent tearing.
+        /// Default: true
+        /// </summary>
+        public bool SynchronizeWithVerticalRetrace = true;
+
+        /// <summary>
+        /// If true, exit is called once the escape key is pressed.
+        /// Default: false
+        /// </summary>
+        public bool ExitOnEscape = false;
+
+        /// <summary>
+        /// Path to the default font (optional).
+        /// </summary>
+        public string FontPath = null;
+
+        /// <summary>
+        /// Path to a Gum UI project (optional).
+        /// </summary>
+        public string GumProject = null;
+
+        /// <summary>
+        /// Returns a config instance with default values.
+        /// </summary>
+        public static EngineConfig BaseConfig => new EngineConfig();
     }
+
+
 
     public static class DefaultInput
     {

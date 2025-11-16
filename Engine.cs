@@ -92,11 +92,6 @@ namespace ConstructEngine
             IsMouseVisible = true;
 
             Window.AllowUserResizing = true;
-            Window.ClientSizeChanged += (_, _) =>
-            {
-                UpdateRenderTargetTransform();
-                UpdateGumCamera();
-            };
 
             Window.AllowUserResizing = AllowUserResizing;
             Window.IsBorderless = IsBorderless;
@@ -118,6 +113,12 @@ namespace ConstructEngine
             Input.InitializeBinds(DefaultInput.Binds);
 
             base.Initialize();
+
+            Window.ClientSizeChanged += (_, _) =>
+            {
+                UpdateRenderTargetTransform();
+                UpdateGumCamera();
+            };
 
             GraphicsDevice = base.GraphicsDevice;
             SpriteBatch = new SpriteBatch(GraphicsDevice);
