@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -7,6 +6,11 @@ namespace ConstructEngine.Graphics
 {
     public class Sprite
     {
+        /// <summary>
+        /// The optional name of the sprite.
+        /// </summary>
+        public String Name {get; set;}
+
         /// <summary>
         /// Gets or Sets the source texture region represented by this sprite.
         /// </summary>
@@ -19,10 +23,6 @@ namespace ConstructEngine.Graphics
         /// Default value is Color.White
         /// </remarks>
         public Color Color { get; set; } = Color.White;
-        
-        
-        public Vector2 StartPosition { get; set; } = Vector2.Zero;
-
         /// <summary>
         /// Gets or Sets the amount of rotation, in radians, to apply when rendering this sprite.
         /// </summary>
@@ -46,6 +46,11 @@ namespace ConstructEngine.Graphics
         /// Default value is Vector2.Zero
         /// </remarks>
         public Vector2 Origin { get; set; } = Vector2.Zero;
+
+        /// <summary>
+        /// The position of the sprite.
+        /// </summary>
+        public Vector2 Position {get; set;} = Vector2.Zero;
 
         /// <summary>
         /// Gets or Sets the sprite effects to apply when rendering this sprite.
@@ -79,38 +84,34 @@ namespace ConstructEngine.Graphics
         /// Height is calculated by multiplying the height of the source texture region by the y-axis scale factor.
         /// </remarks>
         public float Height => Region.Height * Scale.Y;
-        
-        public static List<Sprite> SpriteList { get; set; } = new();
+
+        private static int _spriteCounter = 0;
 
         /// <summary>
-        /// Creates a new sprite.
+        /// Creates a sprite with an optional parameter for a name.
         /// </summary>
-        public Sprite()
+        public Sprite(string name = null)
         {
-            SpriteList.Add(this);
+            Name = name ?? GenerateRandomName();
         }
 
         /// <summary>
-        /// Creates a new sprite using the specified source texture region.
+        /// Creates a new sprite using the specified source texture region and with an optional parameter for a name.
         /// </summary>
         /// <param name="region">The texture region to use as the source texture region for this sprite.</param>
-        public Sprite(TextureRegion region)
+        public Sprite(TextureRegion region, string name = null)
         {
+            Name = name ?? GenerateRandomName();
             Region = region;
-            
-            
-            SpriteList.Add(this);
         }
 
-        public static void DrawSpritesFromList(SpriteBatch spriteBatch, Vector2 position)
+        private static string GenerateRandomName()
         {
-            for (int i = SpriteList.Count - 1; i >= 0; i--)
-            {
-                Sprite sprite = SpriteList[i];
-                sprite.Draw(spriteBatch, sprite.StartPosition);
-            }
+            _spriteCounter++; // increment counter for uniqueness
+            return $"Sprite_{_spriteCounter}_{Guid.NewGuid().ToString("N").Substring(0, 6)}";
         }
-        
+
+
         /// <summary>
         /// Sets the origin of this sprite to the center.
         /// </summary>
@@ -123,10 +124,20 @@ namespace ConstructEngine.Graphics
         /// Submit this sprite for drawing to the current batch.
         /// </summary>
         /// <param name="spriteBatch">The SpriteBatch instance used for batching draw calls.</param>
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            Region.Draw(spriteBatch, Position, Color, Rotation, Origin, Scale, Effects, LayerDepth);
+        }
+
+         /// <summary>
+        /// Submit this sprite for drawing to the current batch.
+        /// </summary>
+        /// <param name="spriteBatch">The SpriteBatch instance used for batching draw calls.</param>
         /// <param name="position">The xy-coordinate position to render this sprite at.</param>
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
         {
-            Region.Draw(spriteBatch, position, Color, Rotation, Origin, Scale, Effects, LayerDepth);
+            Position = position;
+            Region.Draw(spriteBatch, Position, Color, Rotation, Origin, Scale, Effects, LayerDepth);
         }
         
 

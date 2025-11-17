@@ -1,129 +1,105 @@
-using System;
-using System.Collections.Generic;
 using ConstructEngine.Graphics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ConstructEngine.Graphics
 {
     public class ParallaxBackground
     {
-        public Texture2D Texture {get; set;}
-        public float ParallaxFactor {get; set;}
+        public Texture2D Texture { get; }
+        public float ParallaxFactor { get; }
+        public Vector2 Position;
+        public SamplerState SamplerState { get; }
+        public Camera Camera { get; }
 
-        public Vector2 Position = Vector2.Zero;
-
-        public Camera Camera { get; set; } = null;
-
-        public static List<ParallaxBackground> BackgroundList = new();
-
-        public static void AddBackground(ParallaxBackground background)
-        {
-            BackgroundList.Add(background);
-        }
-        
-        public static void AddBackgrounds(String[] imagePaths, float topParralaxFactor, Camera camera = null)
-        {
-            float parallaxFactor = 0f;
-
-            foreach (string path in imagePaths)
-            {
-                parallaxFactor += topParralaxFactor;
-
-                //BackgroundList.Add(new ParallaxBackground(path, Engine.Content, parallaxFactor, RepeatYX, camera));
-            }
-        }
-
-        public static SamplerState RepeatX = new SamplerState()
-        {
-            AddressU = TextureAddressMode.Wrap,
-            AddressV = TextureAddressMode.Clamp,
-            Filter = TextureFilter.Linear
-        };
-        
-        public static SamplerState RepeatY = new SamplerState()
-        {
-            AddressU = TextureAddressMode.Clamp,
-            AddressV = TextureAddressMode.Wrap,
-            Filter = TextureFilter.Linear
-        };
-        
-        public static SamplerState RepeatYX = new SamplerState()
-        {
-            AddressU = TextureAddressMode.Wrap,
-            AddressV = TextureAddressMode.Wrap,
-            Filter = TextureFilter.Linear
-        };
-        
-        
-        
-        public SamplerState SamplerState { get; set; }
-
-
-        public ParallaxBackground(string texturePath, float parallaxFactor, SamplerState sampler, Camera camera)
-        {
+        public ParallaxBackground(
+            Texture2D texture, 
+            float parallaxFactor, 
+            SamplerState samplerState, 
+            Camera camera = null,
+            Vector2? position = null
+        ) {
+            Texture = texture;
             ParallaxFactor = parallaxFactor;
+            SamplerState = samplerState;
             Camera = camera;
-            Texture = Engine.Content.Load<Texture2D>(texturePath);
-            
-            SamplerState = sampler;
-            
-            BackgroundList.Add(this);
+            Position = position ?? Vector2.Zero;
         }
 
-        public ParallaxBackground(string texturePath, float parallaxFactor, SamplerState sampler, Vector2 position)
+        public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphics)
         {
-            ParallaxFactor = parallaxFactor;
-            Position = position;
-            Texture = Engine.Content.Load<Texture2D>(texturePath);
-            
-            SamplerState = sampler;
-            
-            BackgroundList.Add(this);
-        }
-        
+            Vector2 cameraOffset = Camera != null ? Camera.cameraPosition : Vector2.Zero;
 
-        public void Draw(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice)
-        {
-            if (Camera != null)
+            Rectangle viewport = graphics.Viewport.Bounds;
+
+            float offsetX = ((Position.X + cameraOffset.X) * ParallaxFactor) % Texture.Width;
+            float offsetY = ((Position.Y + cameraOffset.Y) * ParallaxFactor) % Texture.Height;
+
+            if (offsetX < 0) offsetX += Texture.Width;
+            if (offsetY < 0) offsetY += Texture.Height;
+
+            bool repeatX = SamplerState.AddressU == TextureAddressMode.Wrap;
+            bool repeatY = SamplerState.AddressV == TextureAddressMode.Wrap;
+
+            spriteBatch.Begin(samplerState: SamplerState);
+
+            if (!repeatX && !repeatY)
             {
-                Position.X = Camera.cameraPosition.X;
+                // Draw once (no repeat in either direction)
+                spriteBatch.Draw(Texture, Position - cameraOffset, Color.White);
             }
+            else
+            {
+                // Compute tiling bounds
+                float startX = repeatX ? -offsetX : 0;
+                float startY = repeatY ? -offsetY : 0;
 
+                float endX = repeatX ? viewport.Width : Texture.Width;
+                float endY = repeatY ? viewport.Height : Texture.Height;
 
-            spriteBatch.Begin(
-                SpriteSortMode.Deferred,
-                BlendState.AlphaBlend,
-                SamplerState,
-                DepthStencilState.None,
-                RasterizerState.CullNone
-            );
-
-            spriteBatch.Draw(
-                Texture,
-                new Rectangle(0, 0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height),
-                new Rectangle(
-                    (int)(Position.X * ParallaxFactor),
-                    (int)(Position.Y * ParallaxFactor),
-                    graphicsDevice.Viewport.Width,
-                    graphicsDevice.Viewport.Height
-                ),
-                Color.White
-            );
+                for (float y = startY; y < endY; y += Texture.Height)
+                {
+                    for (float x = startX; x < endX; x += Texture.Width)
+                    {
+                        spriteBatch.Draw(
+                            Texture,
+                            new Vector2(x, y),
+                            Color.White
+                        );
+                    }
+                }
+            }
 
             spriteBatch.End();
         }
 
 
-        public static void DrawParallaxBackgrounds(SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, SamplerState samplerState)
+
+
+    }
+
+    public static class ParallaxSamplers
+    {
+        public static readonly SamplerState RepeatX = new SamplerState
         {
-            foreach (ParallaxBackground background in BackgroundList)
-            {
-                background.Draw(spriteBatch, graphicsDevice);
-            }
-        }
-        
-        
+            AddressU = TextureAddressMode.Wrap,
+            AddressV = TextureAddressMode.Clamp,
+            Filter = TextureFilter.Point
+            
+        };
+
+        public static readonly SamplerState RepeatY = new SamplerState
+        {
+            AddressU = TextureAddressMode.Clamp,
+            AddressV = TextureAddressMode.Wrap,
+            Filter = TextureFilter.Point
+        };
+
+        public static readonly SamplerState RepeatBoth = new SamplerState
+        {
+            AddressU = TextureAddressMode.Wrap,
+            AddressV = TextureAddressMode.Wrap,
+            Filter = TextureFilter.Point
+        };
     }
 }

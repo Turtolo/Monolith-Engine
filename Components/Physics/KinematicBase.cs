@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using ConstructEngine.Area;
 using ConstructEngine.Objects;
 
-namespace ConstructEngine.Components.Physics
+namespace ConstructEngine.Components
 {
     public class KinematicBase : Component
     {

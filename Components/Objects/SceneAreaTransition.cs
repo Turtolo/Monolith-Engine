@@ -10,7 +10,6 @@ namespace ConstructEngine.Objects
 {
     public class SceneAreaTransition : ConstructObject, IObject
     {
-        public Scene.IScene Scene { get; set; }
 
         private bool resetScene = false;
 
@@ -49,7 +48,7 @@ namespace ConstructEngine.Objects
             }
         }
 
-        private Scene.IScene ChangeSceneWithAssembly()
+        private IScene ChangeSceneWithAssembly()
         {
             if (Values.ContainsKey("Scene"))
             {
@@ -57,7 +56,7 @@ namespace ConstructEngine.Objects
 
                 Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
                     .FirstOrDefault(a =>
-                        a.GetTypes().Any(t => t.Name == className && typeof(Scene.IScene).IsAssignableFrom(t)));
+                        a.GetTypes().Any(t => t.Name == className && typeof(IScene).IsAssignableFrom(t)));
 
 
                 if (assembly != null)
@@ -65,11 +64,11 @@ namespace ConstructEngine.Objects
 
 
                     Type type = assembly.GetTypes()
-                        .First(t => t.Name == className && typeof(Scene.IScene).IsAssignableFrom(t));
+                        .First(t => t.Name == className && typeof(IScene).IsAssignableFrom(t));
 
 
 
-                    Scene.IScene instance = (Scene.IScene)Activator.CreateInstance(type, Engine.SceneManager);
+                    IScene instance = (IScene)Activator.CreateInstance(type, Engine.SceneManager);
 
                     return instance;
 

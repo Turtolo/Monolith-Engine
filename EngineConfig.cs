@@ -3,6 +3,7 @@ using ConstructEngine.Input;
 using Microsoft.Xna.Framework.Input;
 
 
+
 namespace ConstructEngine
 {
     /// <summary>
@@ -14,93 +15,86 @@ namespace ConstructEngine
         /// Title of the game window.
         /// Default: "My Game"
         /// </summary>
-        public string Title = "My Game";
+        public string Title { get; init; } = "My Game";
 
         /// <summary>
         /// The root directory of assets.
         /// Default: "Content"
         /// </summary>
-        public string RootContentDirectory = "Content";
+        public string RootContentDirectory { get; init; } = "Content";
 
         /// <summary>
         /// Internal render width in pixels (before scaling).
         /// Default: 640
         /// </summary>
-        public int VirtualWidth = 640;
+        public int RenderWidth { get; init; } = 640;
 
         /// <summary>
         /// Internal render height in pixels (before scaling).
         /// Default: 360
         /// </summary>
-        public int VirtualHeight = 360;
+        public int RenderHeight { get; init; } = 360;
 
         /// <summary>
         /// Whether the game starts in fullscreen mode.
         /// Default: true
         /// </summary>
-        public bool Fullscreen = true;
+        public bool Fullscreen { get; init; } = true;
 
         /// <summary>
         /// Whether the image is scaled using only integer values
         /// to preserve pixel accuracy.
         /// Default: true
         /// </summary>
-        public bool IntegerScaling = true;
+        public bool IntegerScaling { get; init; } = true;
 
         /// <summary>
         /// Whether the user can resize the window border.
         /// Default: true
         /// </summary>
-        public bool AllowUserResizing = true;
+        public bool AllowUserResizing { get; init; } = true;
 
         /// <summary>
         /// Removes the window border/title bar entirely.
         /// Default: true
         /// </summary>
-        public bool IsBorderless = true;
+        public bool IsBorderless { get; init; } = true;
 
         /// <summary>
         /// If true, the mouse is visible
         /// Default: false
         /// </summary>
-        public bool IsMouseVisible = false;
+        public bool IsMouseVisible { get; init; } = false;
 
         /// <summary>
         /// If true, the engine updates as fast as possible.
         /// If false, updates are fixed to 60 per second.
         /// Default: false
         /// </summary>
-        public bool IsFixedTimeStep = false;
+        public bool IsFixedTimeStep { get; init; } = false;
 
         /// <summary>
         /// If true, V-Sync is enabled to prevent tearing.
         /// Default: true
         /// </summary>
-        public bool SynchronizeWithVerticalRetrace = true;
+        public bool SynchronizeWithVerticalRetrace { get; init; } = true;
 
         /// <summary>
         /// If true, exit is called once the escape key is pressed.
         /// Default: false
         /// </summary>
-        public bool ExitOnEscape = false;
+        public bool ExitOnEscape { get; init; } = false;
 
         /// <summary>
         /// Path to the default font (optional).
         /// </summary>
-        public string FontPath = null;
+        public string FontPath { get; init; } = null;
 
         /// <summary>
         /// Path to a Gum UI project (optional).
         /// </summary>
-        public string GumProject = null;
-
-        /// <summary>
-        /// Returns a config instance with default values.
-        /// </summary>
-        public static EngineConfig BaseConfig => new EngineConfig();
+        public string GumProject { get; init; } = null;
     }
-
-
 
     public static class DefaultInput
     {

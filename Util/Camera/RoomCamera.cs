@@ -9,7 +9,6 @@ namespace ConstructEngine.Graphics
 {
     public class RoomCamera : Camera
     {
-        public Matrix Transform { get; private set; }
         private Tween cameraXTween;
         private Tween cameraYTween;
         Vector2 cameraTargetPosition = Vector2.Zero;
@@ -22,31 +21,36 @@ namespace ConstructEngine.Graphics
 
         public RoomCamera(float zoom)
         {
+            var cfg = Engine.Instance.Config;
+            
             Zoom = zoom;
 
 
-            cameraPosition = new Vector2(Engine.VirtualWidth / 2, Engine.VirtualHeight / 2);
+            cameraPosition = new Vector2(cfg.RenderWidth / 2, cfg.RenderHeight / 2);
 
             CameraRectangle = new Rectangle
             (
-                (int)(cameraPosition.X - (Engine.VirtualWidth / (2 * Zoom))),
-                (int)(cameraPosition.Y - (Engine.VirtualHeight / (2 * Zoom))),
-                (int)(Engine.VirtualWidth / Zoom),
-                (int)(Engine.VirtualHeight / Zoom)
+                (int)(cameraPosition.X - (cfg.RenderWidth / (2 * Zoom))),
+                (int)(cameraPosition.Y - (cfg.RenderHeight / (2 * Zoom))),
+                (int)(cfg.RenderWidth / Zoom),
+                (int)(cfg.RenderHeight / Zoom)
             );
         }
         
         private void UpdateCameraRectangle()
         {
-            CameraRectangle.X = (int)(cameraPosition.X - (Engine.VirtualWidth / (2 * Zoom)));
-            CameraRectangle.Y = (int)(cameraPosition.Y - (Engine.VirtualHeight / (2 * Zoom)));
-            CameraRectangle.Width = (int)(Engine.VirtualWidth / Zoom);
-            CameraRectangle.Height = (int)(Engine.VirtualHeight / Zoom);
+            var cfg = Engine.Instance.Config;
+
+            CameraRectangle.X = (int)(cameraPosition.X - (cfg.RenderWidth / (2 * Zoom)));
+            CameraRectangle.Y = (int)(cameraPosition.Y - (cfg.RenderHeight / (2 * Zoom)));
+            CameraRectangle.Width = (int)(cfg.RenderWidth / Zoom);
+            CameraRectangle.Height = (int)(cfg.RenderHeight / Zoom);
         }
         
         
         public void Follow(KinematicEntity targetEntity)
         {
+            var cfg = Engine.Instance.Config;
             if (targetEntity == null) return;
 
             var side = CollisionHelper.GetCameraEdge(targetEntity.KinematicBase.Collider, CameraRectangle);
@@ -69,7 +73,7 @@ namespace ConstructEngine.Graphics
                     );
                     
                     cameraXTween.Start();
-                    Engine.TweenManager.Add(cameraXTween);
+                    Engine.TweenManager.AddTween(cameraXTween);
                 }
 
                 if (side == CollisionSide.Right)
@@ -87,7 +91,7 @@ namespace ConstructEngine.Graphics
                         () => targetEntity.KinematicBase.Locked = false
                     );
                     cameraXTween.Start();
-                    Engine.TweenManager.Add(cameraXTween);
+                    Engine.TweenManager.AddTween(cameraXTween);
                 }
             }
 
@@ -96,7 +100,7 @@ namespace ConstructEngine.Graphics
             UpdateCameraRectangle();
 
             var position = Matrix.CreateTranslation(-cameraPosition.X, -cameraPosition.Y, 0f);
-            var offset = Matrix.CreateTranslation(Engine.VirtualWidth / 2f, Engine.VirtualHeight / 2f, 0f);
+            var offset = Matrix.CreateTranslation(cfg.RenderWidth / 2f, cfg.RenderHeight / 2f, 0f);
             var scale = Matrix.CreateScale(Zoom, Zoom, 1f);
 
             Transform = position * scale * offset;

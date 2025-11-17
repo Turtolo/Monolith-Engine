@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using ConstructEngine.Components.Physics;
+using ConstructEngine.Components;
 using ConstructEngine.Objects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

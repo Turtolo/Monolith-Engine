@@ -9,7 +9,6 @@ namespace ConstructEngine.Graphics
     {
         public bool XEnabled = true;
         public bool YEnabled = true;
-        public Matrix Transform { get; private set; }
         public float LerpFactor { get; set; } = 0.1f;
         
         public Rectangle? Bounds { get; set; } = null;
@@ -27,8 +26,9 @@ namespace ConstructEngine.Graphics
 
         public FollowCamera(float Zoom, bool XEnabled = true, bool YEnabled = true)
         {
+            var cfg = Engine.Instance.Config;
             cameraPosition = Vector2.Zero;
-            CameraRectangle = new Rectangle(0, 0, Engine.VirtualWidth, Engine.VirtualHeight);
+            CameraRectangle = new Rectangle(0, 0, cfg.RenderWidth, cfg.RenderHeight);
             this.Zoom = Zoom;
             this.XEnabled = XEnabled;
             this.YEnabled = YEnabled;
@@ -51,6 +51,7 @@ namespace ConstructEngine.Graphics
 
         public void Follow(Rectangle target)
         {
+            var cfg = Engine.Instance.Config;
             
             if (!Locked)
             {
@@ -62,8 +63,8 @@ namespace ConstructEngine.Graphics
                 if (YEnabled)
                     cameraPosition.Y = float.Lerp(cameraPosition.Y, targetPosition.Y, LerpFactor);
 
-                float halfWidth = (Engine.VirtualWidth / 2f) / Zoom;
-                float halfHeight = (Engine.VirtualHeight / 2f) / Zoom;
+                float halfWidth = (cfg.RenderWidth / 2f) / Zoom;
+                float halfHeight = (cfg.RenderHeight / 2f) / Zoom;
 
                 if (LimitLeft.HasValue && LimitRight.HasValue)
                 {
@@ -85,7 +86,7 @@ namespace ConstructEngine.Graphics
             }
 
             var position = Matrix.CreateTranslation(-cameraPosition.X, -cameraPosition.Y, 0f);
-            var offset = Matrix.CreateTranslation(Engine.VirtualWidth / 2f, Engine.VirtualHeight / 2f, 0f);
+            var offset = Matrix.CreateTranslation(cfg.RenderWidth / 2f, cfg.RenderHeight / 2f, 0f);
             var scale = Matrix.CreateScale(Zoom, Zoom, 1f);
             
             
@@ -94,7 +95,7 @@ namespace ConstructEngine.Graphics
 
             Transform = position * scale * offset;
             
-            Console.WriteLine((Engine.VirtualWidth / 2f, Engine.VirtualHeight / 2f));
+            Console.WriteLine((cfg.RenderWidth / 2f, cfg.RenderHeight / 2f));
         }
 
 

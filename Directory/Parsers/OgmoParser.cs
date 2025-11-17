@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using ConstructEngine.Graphics;
+using ConstructEngine.Managers;
 using ConstructEngine.Objects;
 using ConstructEngine.Util;
 using Microsoft.Xna.Framework;
@@ -73,22 +74,27 @@ namespace ConstructEngine.Directory
         {
             var root = LoadJson(filename);
 
-            foreach (var layer in root.layers.Where(l => l.folder != null && l.decals != null))
+            foreach (var layer in root.layers.Where(l => !string.IsNullOrEmpty(l.folder) && l.decals != null))
             {
                 foreach (var decal in layer.decals)
                 {
-                    string path = layer.folder + "/" + decal.texture;
-                    int index = path.IndexOf("Assets", StringComparison.OrdinalIgnoreCase);
-                    path = index >= 0 ? path.Substring(index) : path;
-                    path = Path.ChangeExtension(path, null);
+                    
+                    string textureName = Path.GetFileNameWithoutExtension(decal.texture);
+                    string texturePathWithoutExtension = Path.Combine(
+                        Path.GetDirectoryName(decal.texture) ?? string.Empty,
+                        Path.GetFileNameWithoutExtension(decal.texture)
+                    );
 
-                    Texture2D texture = Engine.Content.Load<Texture2D>(path);
+                    Texture2D texture = Engine.Content.Load<Texture2D>(texturePathWithoutExtension);
                     var atlas = new TextureAtlas(texture);
-                    atlas.AddRegion(path, 0, 0, texture.Width, texture.Height);
+                    atlas.AddRegion(textureName, 0, 0, texture.Width, texture.Height);
 
-                    var sprite = atlas.CreateSprite(path);
-                    sprite.StartPosition = new Vector2(decal.x, decal.y);
-                    Sprite.SpriteList.Add(sprite);
+                    var sprite = atlas.CreateSprite(textureName);
+                    sprite.CenterOrigin();
+                    sprite.Name = textureName;
+                    sprite.Position = new Vector2(decal.x, decal.y);
+
+                    Engine.SpriteManager.AddSprite(sprite);
                 }
             }
         }
