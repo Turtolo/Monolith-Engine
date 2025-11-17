@@ -53,11 +53,13 @@ namespace ConstructEngine.Managers
 
         public void DrawAllSprites(SpriteBatch spriteBatch)
         {
+            
             for (int i = Sprites.Count - 1; i >= 0; i--)
             {
                 Sprite s = Sprites[i];
-                s.Draw(spriteBatch);
             }
+
+        
         }
 
     }

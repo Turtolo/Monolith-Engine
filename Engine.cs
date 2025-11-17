@@ -57,6 +57,11 @@ namespace ConstructEngine
         public static SpriteManager SpriteManager { get; private set; }
 
         /// <summary>
+        /// Manager responsible for draw logic.
+        /// </summary>
+        public static DrawManager DrawManager {get; private set; }
+
+        /// <summary>
         /// Content manager used for loading assets such as textures, fonts, and effects.
         /// </summary>
         public static new ContentManager Content { get; private set; }
@@ -161,6 +166,8 @@ namespace ConstructEngine
 
             GraphicsDevice = base.GraphicsDevice;
             SpriteBatch = new SpriteBatch(GraphicsDevice);
+
+            DrawManager = new DrawManager(SpriteBatch);
 
             if (!string.IsNullOrEmpty(Config.FontPath))
                 Font = Content.Load<SpriteFont>(Config.FontPath);
