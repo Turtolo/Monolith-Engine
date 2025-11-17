@@ -6,15 +6,15 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace ConstructEngine.Graphics
 {
-    public class Camera
+    public class CCamera
     {
         
         public Vector2 cameraPosition = Vector2.Zero;
         public float Zoom;
-        public static Camera CurrentCamera;
+        public static CCamera CurrentCamera;
         public Matrix Transform;
         
-        public Camera()
+        public CCamera()
         {
             CurrentCamera = this;
         }

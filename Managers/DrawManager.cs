@@ -82,7 +82,6 @@ namespace ConstructEngine.Managers
         }
         public void Draw(Sprite sprite, DrawLayer layer = DrawLayer.Middleground)
         {
-            Console.WriteLine("yes");
             Queue(new DrawCall
             {
                 Texture = sprite.Region.Texture,
@@ -95,6 +94,34 @@ namespace ConstructEngine.Managers
                 Effects = sprite.Effects,
                 LayerDepth = sprite.LayerDepth,
                 Effect = null
+            }, layer);
+        }
+
+        public void Draw(
+            TextureRegion region,
+            Vector2 position,
+            Color color,
+            DrawLayer layer = DrawLayer.Middleground,
+            float rotation = 0f,
+            Vector2? origin = null,
+            Vector2? scale = null,
+            SpriteEffects effects = SpriteEffects.None,
+            float layerDepth = 0f,
+            Effect effect = null
+        )
+        {
+            Queue(new DrawCall
+            {
+                Texture = region.Texture,
+                Position = position,
+                Color = color,
+                Rotation = rotation,
+                Origin = origin ?? Vector2.Zero,
+                Scale = scale ?? Vector2.One,
+                Effects = effects,
+                LayerDepth = layerDepth,
+                Effect = effect,
+                SourceRectangle = region.SourceRectangle
             }, layer);
         }
 
@@ -120,7 +147,6 @@ namespace ConstructEngine.Managers
 
                     if (call.Texture != null)
                     {   
-                        Console.WriteLine($"{call.Texture} {call.Position} {call.SourceRectangle} {call.Color} {call.Rotation} {call.Origin} {call.Scale} {call.Effects} {call.LayerDepth}");
                         _spriteBatch.Draw(
                             call.Texture,
                             call.Position,

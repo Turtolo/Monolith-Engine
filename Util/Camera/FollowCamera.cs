@@ -5,7 +5,7 @@ using ConstructEngine.Util.Tween;
 
 namespace ConstructEngine.Graphics
 {
-    public class FollowCamera : Camera
+    public class FollowCamera : CCamera
     {
         public bool XEnabled = true;
         public bool YEnabled = true;

@@ -77,42 +77,7 @@ namespace ConstructEngine.Graphics
             int index = row * Columns + column;
             return GetTile(index);
         }
-        
-        
-
-        public Rectangle GetNonZeroBounds()
-        {
-            int minRow = Rows;
-            int maxRow = -1;
-            int minCol = Columns;
-            int maxCol = -1;
-
-            for (int row = 0; row < Rows; row++)
-            {
-                for (int col = 0; col < Columns; col++)
-                {
-                    int index = row * Columns + col;
-                    if (_tiles[index] != 0)
-                    {
-                        if (row < minRow) minRow = row;
-                        if (row > maxRow) maxRow = row;
-                        if (col < minCol) minCol = col;
-                        if (col > maxCol) maxCol = col;
-                    }
-                }
-            }
-
-            if (maxRow == -1)
-            {
-                return new Rectangle(0, 0, 0, 0);
-            }
-
-            int width = maxCol - minCol + 1;
-            int height = maxRow - minRow + 1;
-
-            return new Rectangle(minCol, minRow, width, height);
-        }
-
+    
         public void Draw(SpriteBatch spriteBatch, float layerDepth)
         {
             for (int i = 0; i < Count; i++)
@@ -124,7 +89,15 @@ namespace ConstructEngine.Graphics
                 int y = i / Columns;
 
                 Vector2 position = new Vector2(x * TileWidth, y * TileHeight);
-                tile.Draw(spriteBatch, position, Color.White, layerDepth);
+
+                //tile.Draw(spriteBatch, position, Color.White, layerDepth);
+
+                Engine.DrawManager.Draw(
+                    tile,
+                    position,
+                    Color.White,
+                    layerDepth: layerDepth
+                );
             }
         }
         

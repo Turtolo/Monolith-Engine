@@ -10,8 +10,10 @@ using MonoGameGum;
 
 using ConstructEngine.UI;
 using ConstructEngine.Components;
+using ConstructEngine.Util;
 using ConstructEngine.Util.Tween;
 using ConstructEngine.Managers;
+using ConstructEngine.Graphics;
 
 namespace ConstructEngine
 {
@@ -196,6 +198,9 @@ namespace ConstructEngine
             SceneManager.UpdateCurrentScene(gameTime);
             GumManager.UpdateAll(gameTime);
             GumUI?.Update(this, gameTime);
+
+            if (CCamera.CurrentCamera != null)
+                DrawManager.SetCamera(CCamera.CurrentCamera.Transform);
 
             base.Update(gameTime);
         }

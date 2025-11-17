@@ -10,13 +10,13 @@ namespace ConstructEngine.Graphics
         public float ParallaxFactor { get; }
         public Vector2 Position;
         public SamplerState SamplerState { get; }
-        public Camera Camera { get; }
+        public CCamera Camera { get; }
 
         public ParallaxBackground(
             Texture2D texture, 
             float parallaxFactor, 
             SamplerState samplerState, 
-            Camera camera = null,
+            CCamera camera = null,
             Vector2? position = null
         ) {
             Texture = texture;
