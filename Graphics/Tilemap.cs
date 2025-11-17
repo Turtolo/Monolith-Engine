@@ -19,18 +19,12 @@ namespace ConstructEngine.Graphics
     {
         private readonly Tileset _tileset;
         private readonly int[] _tiles;
-        
-        public static List<Tilemap> Tilemaps = new List<Tilemap>();
 
         public int Rows { get; }
         public int Columns { get; }
         public int Count { get; }
         
         public float LayerDepth { get; set; }
-        
-
-
-
         public float TileWidth => _tileset.TileWidth;
         public float TileHeight => _tileset.TileHeight;
 
@@ -43,18 +37,10 @@ namespace ConstructEngine.Graphics
             Columns = columns;
             Count = Columns * Rows;
             _tiles = new int[Count];
+
+            Engine.DrawManager.Tilemaps.Add(this);
         }
 
-
-
-        public static void DrawTilemaps(SpriteBatch spriteBatch)
-        {
-            foreach (Tilemap tilemap in Tilemaps)
-            {
-                tilemap.Draw(spriteBatch, tilemap.LayerDepth);
-            }
-        }
-        
         
         public void SetTile(int index, int tilesetID)
         {

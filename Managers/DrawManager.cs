@@ -34,6 +34,8 @@ namespace ConstructEngine.Managers
         private readonly Dictionary<DrawLayer, List<DrawCall>> _drawQueues;
         private Matrix _cameraTransform = Matrix.Identity;
 
+        public List<Tilemap> Tilemaps = new List<Tilemap>();
+
         public DrawManager(SpriteBatch spriteBatch)
         {
             _spriteBatch = spriteBatch;
@@ -163,6 +165,14 @@ namespace ConstructEngine.Managers
 
                 _spriteBatch.End();
                 queue.Clear();
+            }
+        }
+
+        public void DrawTilemaps(SpriteBatch spriteBatch)
+        {
+            foreach (Tilemap tilemap in Tilemaps)
+            {
+                tilemap.Draw(spriteBatch, tilemap.LayerDepth);
             }
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ConstructEngine.Components;
 using ConstructEngine.Util;
@@ -29,7 +30,7 @@ namespace ConstructEngine.Objects
             ObjectList.Add(this);
         }
 
-        public virtual void Load() => ObjectDict[Name] = this;
+        public virtual void Load() { }
         public virtual void Unload() { }
         public virtual void Update(GameTime gameTime) { }
         public virtual void Draw(SpriteBatch spriteBatch) { }

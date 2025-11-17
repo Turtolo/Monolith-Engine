@@ -4,15 +4,17 @@ using System.Linq;
 using System.Reflection;
 using ConstructEngine.Area;
 using ConstructEngine.Components;
+using ConstructEngine.Directory;
 using ConstructEngine.Graphics;
 using ConstructEngine.Objects;
+using ConstructEngine.UI;
 using ConstructEngine.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ConstructEngine.Managers
 {
-    public class SceneManager : Scene
+    public class SceneManager
     {
         public readonly Stack<IScene> Scenes = new();
         private bool _sceneFrozen;
@@ -33,11 +35,31 @@ namespace ConstructEngine.Managers
 
             SceneIntervention();
 
+            var cfg = scene.Config;
+
+            String FilePath = cfg.DataPath;
+            String TilemapTexturePath = cfg.TilemapTexturePath;
+            String TilemapRegion = cfg.TilemapRegion;
+            MonoGameGum.Forms.Controls.FrameworkElement GumScreen = cfg.GumScreen;
+
+
+            
+
+            if (cfg.DataPath != null)
+                OgmoParser.FromFile(FilePath, TilemapTexturePath, TilemapRegion);
+            if (cfg.GumScreen != null)
+                
+                GumHelper.AddScreenToRoot(GumScreen);
+            
             scene.Initialize();
             scene.Load();
 
+        
+
             Scenes.Push(scene);
         }
+
+
 
         /// <summary>
         /// Acts in between scene actions where scenes are removed, added, etc
@@ -222,7 +244,7 @@ namespace ConstructEngine.Managers
         /// </summary>
         public static void ClearSceneData()
         {
-            Tilemap.Tilemaps.Clear();
+            Engine.DrawManager.Tilemaps.Clear();
             KinematicEntity.EntityList.Clear();
             Engine.SpriteManager.Empty();
             Area2D.AreaList.Clear();

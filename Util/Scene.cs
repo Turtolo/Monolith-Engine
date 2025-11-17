@@ -9,19 +9,34 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using ConstructEngine.Components;
+using ConstructEngine.Directory;
+using Gum.Forms.Controls;
+using ConstructEngine.UI;
 
 namespace ConstructEngine.Util
 {
     public interface IScene
     {
+        public SceneConfig Config {get; set;}
         public void Initialize();
         public void Load();
         public void Unload();
         public void Update(GameTime gameTime);
         public void Draw(SpriteBatch spriteBatch);
-
     }
 
-    public class Scene {  }
+    public class Scene : IScene
+    {
+        public SceneConfig Config {get; set;}
+        public Scene(SceneConfig config)
+        {
+            Config = config;
+        }
+        public virtual void Initialize() {}
+        public virtual void Load() {}
+        public virtual void Unload() {}
+        public virtual void Update(GameTime gameTime) {}
+        public virtual void Draw(SpriteBatch spriteBatch) {}
+    }
 
 }

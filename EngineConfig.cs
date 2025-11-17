@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ConstructEngine.Input;
+using Gum.Forms.Controls;
 using Microsoft.Xna.Framework.Input;
 
 
@@ -94,6 +95,17 @@ namespace ConstructEngine
         /// Path to a Gum UI project (optional).
         /// </summary>
         public string GumProject { get; init; } = null;
+    }
+
+    /// <summary>
+    /// Scene configuration
+    /// </summary>
+    public record class SceneConfig
+    {
+        public string DataPath {get; init; } = null;
+        public string TilemapRegion {get; init; } = null;
+        public string TilemapTexturePath {get; init; } = null;
+        public MonoGameGum.Forms.Controls.FrameworkElement GumScreen {get; init; } = null;
     }
 
     public static class DefaultInput

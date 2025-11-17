@@ -163,6 +163,7 @@ namespace ConstructEngine.Directory
         public static void LoadTilemap(ContentManager content, string filename, string textureName, string region)
         {
             var root = LoadJson(filename);
+            
             var tileLayer = root.layers.FirstOrDefault(l => l.data != null && l.tileset != null)
                 ?? throw new Exception("No tile layer found in JSON.");
 
@@ -188,7 +189,6 @@ namespace ConstructEngine.Directory
                 }
 
                 tilemap.LayerDepth = float.Parse(layer.name, CultureInfo.InvariantCulture);
-                Tilemap.Tilemaps.Add(tilemap);
             }
         }
         

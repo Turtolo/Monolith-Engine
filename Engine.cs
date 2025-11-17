@@ -14,6 +14,8 @@ using ConstructEngine.Util;
 using ConstructEngine.Util.Tween;
 using ConstructEngine.Managers;
 using ConstructEngine.Graphics;
+using ConstructEngine.Objects;
+using ConstructEngine.Helpers;
 
 namespace ConstructEngine
 {
@@ -195,9 +197,11 @@ namespace ConstructEngine
                 Exit();
 
             TweenManager.Update();
+            ConstructObject.UpdateObjects(gameTime);
             SceneManager.UpdateCurrentScene(gameTime);
             GumManager.UpdateAll(gameTime);
             GumUI?.Update(this, gameTime);
+            
 
             if (CCamera.CurrentCamera != null)
                 DrawManager.SetCamera(CCamera.CurrentCamera.Transform);
@@ -214,7 +218,13 @@ namespace ConstructEngine
             SetRenderTarget();
 
             GraphicsDevice.Clear(Color.DarkSlateGray);
+
+            ConstructObject.DrawObjects(SpriteBatch);
+            SpriteManager.DrawAllSprites(SpriteBatch);
+            DrawManager.DrawTilemaps(SpriteBatch);
             SceneManager.DrawCurrentScene(SpriteBatch);
+
+            DrawManager.Flush();
 
             GraphicsDevice.SetRenderTarget(null);
             GraphicsDevice.Clear(Color.Black);
