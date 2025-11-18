@@ -15,7 +15,7 @@ namespace ConstructEngine.Components
         void Draw(SpriteBatch spriteBatch);
     }
 
-    public class KinematicEntity : ConstructObject
+    public class KinematicEntity : CObject
     {
         public static List<KinematicEntity> EntityList = new List<KinematicEntity>();
         public KinematicBase KinematicBase;

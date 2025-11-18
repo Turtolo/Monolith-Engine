@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 namespace ConstructEngine.Objects
 {
-    public class CollisionObject : ConstructObject, IObject
+    public class CollisionObject : CObject, IObject
     {
         
         public bool Collidable { get; set; }

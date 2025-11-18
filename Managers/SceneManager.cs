@@ -47,7 +47,7 @@ namespace ConstructEngine.Managers
             if (cfg.DataPath != null)
                 OgmoParser.FromFile(FilePath, TilemapTexturePath, TilemapRegion);
 
-        
+            GetAndSetPlayer();
 
             Scenes.Push(scene);
         }
@@ -192,7 +192,7 @@ namespace ConstructEngine.Managers
             if (!IsStackEmpty() && !_sceneFrozen)
             {
                 Engine.TweenManager.Update();
-                ConstructObject.UpdateObjects(gameTime);
+                CObject.UpdateObjects(gameTime);
                 GetCurrentScene()?.Update(gameTime);
             }
 
@@ -235,6 +235,17 @@ namespace ConstructEngine.Managers
             var newScene = (IScene)Activator.CreateInstance(currentType);
             AddScene(newScene);
         }
+
+        private void GetAndSetPlayer()
+        {
+            KinematicEntity mainCharacter =
+            CObject.ObjectList
+                .FirstOrDefault(e => e.GetType() == Engine.Instance.Config.MainCharacterType)
+                as KinematicEntity;
+
+            if (mainCharacter != null)
+                Engine.MainCharacter = mainCharacter;
+        }
         
         /// <summary>
         /// Clears data related to scenes.
@@ -245,7 +256,7 @@ namespace ConstructEngine.Managers
             KinematicEntity.EntityList.Clear();
             Engine.SpriteManager.Empty();
             Area2D.AreaList.Clear();
-            ConstructObject.ObjectList.Clear();
+            CObject.ObjectList.Clear();
             Ray2D.RayList.Clear();
         }
     }

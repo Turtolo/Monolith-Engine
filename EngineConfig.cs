@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
+using ConstructEngine.Components;
 using ConstructEngine.Input;
 using Gum.Forms.Controls;
 using Microsoft.Xna.Framework.Input;
@@ -95,6 +98,12 @@ namespace ConstructEngine
         /// Path to a Gum UI project (optional).
         /// </summary>
         public string GumProject { get; init; } = null;
+
+        /// <summary>
+        /// The main character type.
+        /// Example: typeof(PlayerCharacter)
+        /// </summary>
+        public Type MainCharacterType { get; init; }
     }
 
     /// <summary>

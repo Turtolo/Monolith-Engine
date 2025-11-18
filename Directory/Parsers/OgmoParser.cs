@@ -100,7 +100,7 @@ namespace ConstructEngine.Directory
         }
 
         /// <summary>
-        /// Searches for ConstructObjects within the enties layer in the level file, sets the object's values from the file.
+        /// Searches for CObjects within the enties layer in the level file, sets the object's values from the file.
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="Player"></param>
@@ -129,22 +129,22 @@ namespace ConstructEngine.Directory
                             return ex.Types.Where(t => t != null);
                         }
                     })
-                    .FirstOrDefault(t => t.IsSubclassOf(typeof(ConstructObject)) && t.Name == entity.name);
+                    .FirstOrDefault(t => t.IsSubclassOf(typeof(CObject)) && t.Name == entity.name);
 
                 if (type != null)
                 {
-                    var obj = (ConstructObject)Activator.CreateInstance(type);
+                    var obj = (CObject)Activator.CreateInstance(type);
                     obj.Rectangle = new(entity.x, entity.y, entity.width, entity.height);
                     obj.Name = entity.name;
                     obj.Values = normalDict;
                 }
                 else
                 {
-                    Console.WriteLine($"Type '{entity.name}' not found or not a subclass of ConstructObject.");
+                    Console.WriteLine($"Type '{entity.name}' not found or not a subclass of CObject.");
                 }
             }
 
-            ConstructObject.LoadObjects();
+            CObject.LoadObjects();
         }
 
 

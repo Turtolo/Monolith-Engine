@@ -218,7 +218,7 @@ namespace ConstructEngine
 
             GraphicsDevice.Clear(Color.DarkSlateGray);
 
-            ConstructObject.DrawObjects(SpriteBatch);
+            CObject.DrawObjects(SpriteBatch);
             SpriteManager.DrawAllSprites(SpriteBatch);
             DrawManager.DrawTilemaps(SpriteBatch);
             SceneManager.DrawCurrentScene(SpriteBatch);
