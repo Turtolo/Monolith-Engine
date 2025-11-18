@@ -105,7 +105,6 @@ namespace ConstructEngine
         public string DataPath {get; init; } = null;
         public string TilemapRegion {get; init; } = null;
         public string TilemapTexturePath {get; init; } = null;
-        public MonoGameGum.Forms.Controls.FrameworkElement GumScreen {get; init; } = null;
     }
 
     public static class DefaultInput

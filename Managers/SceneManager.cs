@@ -40,19 +40,12 @@ namespace ConstructEngine.Managers
             String FilePath = cfg.DataPath;
             String TilemapTexturePath = cfg.TilemapTexturePath;
             String TilemapRegion = cfg.TilemapRegion;
-            MonoGameGum.Forms.Controls.FrameworkElement GumScreen = cfg.GumScreen;
 
-
-            
+            scene.Initialize();
+            scene.Load();
 
             if (cfg.DataPath != null)
                 OgmoParser.FromFile(FilePath, TilemapTexturePath, TilemapRegion);
-            if (cfg.GumScreen != null)
-                
-                GumHelper.AddScreenToRoot(GumScreen);
-            
-            scene.Initialize();
-            scene.Load();
 
         
 
@@ -197,7 +190,11 @@ namespace ConstructEngine.Managers
         public void UpdateCurrentScene(GameTime gameTime)
         {
             if (!IsStackEmpty() && !_sceneFrozen)
+            {
+                Engine.TweenManager.Update();
+                ConstructObject.UpdateObjects(gameTime);
                 GetCurrentScene()?.Update(gameTime);
+            }
 
             for (int i = BackseatComponent.BackseatComponentList.Count - 1; i >= 0; i--)
                 BackseatComponent.BackseatComponentList[i].Update(gameTime);

@@ -1,112 +1,138 @@
 using System;
+using System.Collections.Generic;
 using ConstructEngine.Area;
+using ConstructEngine.Managers;
 using ConstructEngine.Util;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ConstructEngine.Helpers
 {
-    public class DrawHelper()
+    public static class DrawHelper
     {
-        public static void DrawCircle(Circle circ, Color color, int thickness, float layerDepth = 0.1f)
+
+        private static Texture2D _pixel;
+        private static Dictionary<int, Texture2D> _circleCache = new();
+
+        private static Texture2D GetPixel(GraphicsDevice device)
         {
-            if (circ == null)
+            if (_pixel == null)
             {
-                return;
+                _pixel = new Texture2D(device, 1, 1);
+                _pixel.SetData(new[] { Color.White });
             }
+            return _pixel;
+        }
 
-            Texture2D texture = new Texture2D(Engine.GraphicsDevice, circ.Radius, circ.Radius);
-            Color[] colorData = new Color[circ.Radius * circ.Radius];
+        private static Texture2D GetCircleTexture(GraphicsDevice device, int radius)
+        {
+            if (_circleCache.TryGetValue(radius, out var cached))
+                return cached;
 
-            float diam = circ.Radius / 2f;
+            var texture = new Texture2D(device, radius, radius);
+            var data = new Color[radius * radius];
+
+            float diam = radius / 2f;
             float diamsq = diam * diam;
 
-            for (int x = 0; x < circ.Radius; x++)
+            for (int x = 0; x < radius; x++)
             {
-                for (int y = 0; y < circ.Radius; y++)
+                for (int y = 0; y < radius; y++)
                 {
-                    int index = x * circ.Radius + y;
+                    int index = x * radius + y;
                     Vector2 pos = new Vector2(x - diam, y - diam);
-                    if (pos.LengthSquared() <= diamsq)
-                    {
-                        colorData[index] = Color.White;
-                    }
-                    else
-                    {
-                        colorData[index] = Color.Transparent;
-                    }
+                    data[index] = pos.LengthSquared() <= diamsq ? Color.White : Color.Transparent;
                 }
             }
 
-            texture.SetData(colorData);
-
-            Engine.SpriteBatch.Draw(texture, new Vector2(circ.X, circ.Y), color);
+            texture.SetData(data);
+            _circleCache[radius] = texture;
+            return texture;
         }
 
-        public static void DrawString(string input, Color color, Vector2 pos)
+        public static void DrawCircle(Circle circ, Color color, int thickness = 1, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
         {
-            Engine.SpriteBatch.DrawString(Engine.Font, input, pos, color);
+            if (circ == null) return;
+
+            Texture2D texture = GetCircleTexture(Engine.GraphicsDevice, circ.Radius);
+
+            Engine.DrawManager.Draw(
+                texture,
+                new Vector2(circ.X, circ.Y),
+                color,
+                layer,
+                0f,
+                new Vector2(texture.Width / 2f, texture.Height / 2f),
+                Vector2.One,
+                SpriteEffects.None,
+                layerDepth
+            );
         }
 
-        public static void DrawRay(Ray2D ray, Color color, float thickness, float layerDepth = 0.1f)
+        public static void DrawRay(Ray2D ray, Color color, float thickness = 1f, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
         {
-            Color Color;
+            var pixel = GetPixel(Engine.GraphicsDevice);
 
-            if (ray.HasHit)
-            {
-                Color = ColorHelper.GetOppositeColor(color);
-            }
-
-            else
-            {
-                Color = color;
-            }
-            
-            Texture2D pixel = new Texture2D(Engine.GraphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color });
+            Color drawColor = ray.HasHit
+                ? ColorHelper.GetOppositeColor(color)
+                : color;
 
             Vector2 end = ray.Position + ray.Direction * ray.Length;
             Vector2 edge = end - ray.Position;
             float angle = (float)Math.Atan2(edge.Y, edge.X);
 
-
-
-            Engine.SpriteBatch.Draw(
+            Engine.DrawManager.Draw(
                 pixel,
-                new Rectangle((int)ray.Position.X, (int)ray.Position.Y, (int)edge.Length(), (int)thickness),
-                null,
-                Color,
+                ray.Position,
+                drawColor,
+                layer,
                 angle,
                 Vector2.Zero,
+                new Vector2(edge.Length(), thickness),
                 SpriteEffects.None,
-                layerDepth);
+                layerDepth
+            );
         }
-        
-        public static void DrawRectangle(Rectangle rect, Color color, int thickness, float layerDepth = 0.1f)
+
+        public static void DrawRectangle(Rectangle rect, Color color, int thickness = 1, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
         {
-            if (rect == null)
-            {
-                return;
-            }
+            var pixel = GetPixel(Engine.GraphicsDevice);
 
-            Texture2D rectangleTexture = new Texture2D(Engine.GraphicsDevice, 1, 1);
-            rectangleTexture.SetData(new[] { color });
+            // Top
+            Engine.DrawManager.Draw(pixel,
+                new Vector2(rect.X, rect.Y),
+                color, layer, 0f, Vector2.Zero,
+                new Vector2(rect.Width, thickness),
+                SpriteEffects.None, layerDepth);
 
-            Engine.SpriteBatch.Draw(rectangleTexture,
-                new Rectangle(rect.X, rect.Y, rect.Width, thickness),
-                null, color, 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+            // Bottom
+            Engine.DrawManager.Draw(pixel,
+                new Vector2(rect.X, rect.Bottom - thickness),
+                color, layer, 0f, Vector2.Zero,
+                new Vector2(rect.Width, thickness),
+                SpriteEffects.None, layerDepth);
 
-            Engine.SpriteBatch.Draw(rectangleTexture,
-                new Rectangle(rect.X, rect.Bottom - thickness, rect.Width, thickness),
-                null, color, 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+            // Left
+            Engine.DrawManager.Draw(pixel,
+                new Vector2(rect.X, rect.Y),
+                color, layer, 0f, Vector2.Zero,
+                new Vector2(thickness, rect.Height),
+                SpriteEffects.None, layerDepth);
 
-            Engine.SpriteBatch.Draw(rectangleTexture,
-                new Rectangle(rect.X, rect.Y, thickness, rect.Height),
-                null, color, 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+            // Right
+            Engine.DrawManager.Draw(pixel,
+                new Vector2(rect.Right - thickness, rect.Y),
+                color, layer, 0f, Vector2.Zero,
+                new Vector2(thickness, rect.Height),
+                SpriteEffects.None, layerDepth);
+        }
 
-            Engine.SpriteBatch.Draw(rectangleTexture,
-                new Rectangle(rect.Right - thickness, rect.Y, thickness, rect.Height),
-                null, color, 0f, Vector2.Zero, SpriteEffects.None, layerDepth);
+        public static void DrawString(string input, Color color, Vector2 pos, float layerDepth = 0.9f)
+        {
+            // Text is still drawn immediately (or add Font support to Engine.DrawManager)
+            Engine.SpriteBatch.Begin();
+            Engine.SpriteBatch.DrawString(Engine.Font, input, pos, color);
+            Engine.SpriteBatch.End();
         }
     }
 }

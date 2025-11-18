@@ -196,8 +196,7 @@ namespace ConstructEngine
             if ((Config.ExitOnEscape && Input.Keyboard.IsKeyDown(Keys.Escape)) || quit)
                 Exit();
 
-            TweenManager.Update();
-            ConstructObject.UpdateObjects(gameTime);
+            
             SceneManager.UpdateCurrentScene(gameTime);
             GumManager.UpdateAll(gameTime);
             GumUI?.Update(this, gameTime);
