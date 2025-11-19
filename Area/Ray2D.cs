@@ -175,7 +175,7 @@ namespace ConstructEngine.Area
         }
 
         /// <summary>
-        /// Circle intersection with the ray
+        /// CircleShape intersection with the ray
         /// </summary>
         /// <param name="ray"></param>
         /// <param name="circ"></param>
@@ -183,7 +183,7 @@ namespace ConstructEngine.Area
         /// <param name="hitPoint"></param>
         /// <param name="distance"></param>
         /// <returns></returns>
-        private static bool CircleIntersect(Ray2D ray, Circle circ, float maxLength, out Vector2 hitPoint, out float distance)
+        private static bool CircleShapeIntersect(Ray2D ray, CircleShape circ, float maxLength, out Vector2 hitPoint, out float distance)
         {
             hitPoint = Vector2.Zero;
             distance = float.MaxValue;
@@ -191,11 +191,11 @@ namespace ConstructEngine.Area
             float t = Vector2.Dot(circ.Location.ToVector2() - ray.Position, ray.Direction);
 
             Vector2 closestPoint = ray.Position + ray.Direction * t;
-            float distToCircle = Vector2.Distance(closestPoint, circ.Location.ToVector2());
+            float distToCircleShape = Vector2.Distance(closestPoint, circ.Location.ToVector2());
 
-            if (distToCircle > circ.Radius) return false;
+            if (distToCircleShape > circ.Radius) return false;
 
-            float dt = (float)Math.Sqrt(circ.Radius * circ.Radius - distToCircle * distToCircle);
+            float dt = (float)Math.Sqrt(circ.Radius * circ.Radius - distToCircleShape * distToCircleShape);
             float t0 = t - dt;
             float t1 = t + dt;
 
@@ -210,7 +210,7 @@ namespace ConstructEngine.Area
 
 
         /// <summary>
-        /// Universal check that checks for both rectangle and circle intersection
+        /// Universal check that checks for both rectangle and CircleShape intersection
         /// </summary>
         /// <param name="ray"></param>
         /// <param name="area"></param>
@@ -223,7 +223,7 @@ namespace ConstructEngine.Area
             if (area.HasRect)
                 return RectangleIntersect(ray, area.Rect, maxLength, out hitPoint, out distance);
             else if (area.HasCircle)
-                return CircleIntersect(ray, area.Circ, maxLength, out hitPoint, out distance);
+                return CircleShapeIntersect(ray, area.Circ, maxLength, out hitPoint, out distance);
 
             hitPoint = Vector2.Zero;
             distance = float.MaxValue;

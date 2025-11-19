@@ -8,7 +8,7 @@ namespace ConstructEngine.Area
     public class Area2D
     {
         public static List<Area2D> AreaList = new List<Area2D>();
-        public static List<Circle> CircleList = new List<Circle>();
+        public static List<CircleShape> CircleShapeList = new List<CircleShape>();
         public static List<Rectangle> RectangleList = new List<Rectangle>();
         public bool HasRect
         {
@@ -46,7 +46,7 @@ namespace ConstructEngine.Area
         }
 
         public Rectangle Rect;
-        public Circle Circ;
+        public CircleShape Circ;
         public object Root;
         public Type RootType { get; private set; }
 
@@ -75,22 +75,22 @@ namespace ConstructEngine.Area
         }
 
         /// <summary>
-        /// An area with a circle, includes paramteres for a root and whether or not it is enabled.
+        /// An area with a CircleShape, includes paramteres for a root and whether or not it is enabled.
         /// </summary>
-        /// <param name="circle"></param>
+        /// <param name="CircleShape"></param>
         /// <param name="enabled"></param>
         /// <param name="root"></param>
 
-        public Area2D(Circle circle, bool enabled, object root)
+        public Area2D(CircleShape CircleShape, bool enabled, object root)
         {
-            Circ = circle;
+            Circ = CircleShape;
             Enabled = enabled;
 
             Root = root;
 
             RootType = Root.GetType();
 
-            CircleList.Add(Circ);
+            CircleShapeList.Add(Circ);
 
             AreaList.Add(this);
         }
