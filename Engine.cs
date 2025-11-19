@@ -139,8 +139,11 @@ namespace ConstructEngine
             Window.IsBorderless = Config.IsBorderless;
             IsFixedTimeStep = Config.IsFixedTimeStep;
 
-            Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            if (Config.Maximised)
+            {
+                Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            }
 
             Graphics.SynchronizeWithVerticalRetrace = Config.SynchronizeWithVerticalRetrace;
             Graphics.ApplyChanges();

@@ -40,6 +40,12 @@ namespace ConstructEngine
         public int RenderHeight { get; init; } = 360;
 
         /// <summary>
+        /// Whether the game starts in maximised mode.
+        /// Default: true
+        /// </summary>
+        public bool Maximised {get; init; } = true;
+
+        /// <summary>
         /// Whether the game starts in fullscreen mode.
         /// Default: true
         /// </summary>
