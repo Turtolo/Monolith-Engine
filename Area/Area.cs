@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using ConstructEngine.Helpers;
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
+using ConstructEngine.Components;
 
 namespace ConstructEngine.Area
 {
@@ -11,41 +13,48 @@ namespace ConstructEngine.Area
         private static List<Area> allInstances = new List<Area>();
         private bool wasInArea = false;
         
-        public RegionShape2D RegionShape {get; set;}
+        public IRegionShape2D RegionShape {get; set;}
         public static IReadOnlyList<Area> AllInstances => allInstances.AsReadOnly();
 
-        public Area(RegionShape2D shape)
+        public Area(IRegionShape2D shape)
         {
             allInstances.Add(this);
             RegionShape = shape;
         }
+
+        public bool AreaEntered(out Area overlapping)
+        {
+            overlapping = AllInstances
+                .FirstOrDefault(a => a != this && RegionShape.Intersects(a.RegionShape));
+
+            bool isInArea = overlapping != null;
+            bool entered = !wasInArea && isInArea;
+
+            wasInArea = isInArea;
+            return entered;
+        }
+
         public bool AreaEntered()
         {
-            bool isInArea = AllInstances
-                .Where(a => a != this)
-                .Any(a => RegionShape.Shape.Intersects(a.RegionShape.Shape)
-            );            
+            return AreaEntered(out _);
+        }
+
+
+        public bool AreaExited(out Area overlapping)
+        {
+            overlapping = AllInstances
+                .FirstOrDefault(a => a != this && RegionShape.Intersects(a.RegionShape));
+
+            bool isInArea = overlapping != null;
+            bool exited = wasInArea && !isInArea;
+
             wasInArea = isInArea;
-            return isInArea;
+            return exited;
         }
 
         public bool AreaExited()
         {
-            foreach (Area a in AllInstances)
-            {
-                if (a == this) continue; 
-
-                bool isInArea = AllInstances
-                    .Where(a => a != this)
-                    .Any(a => RegionShape.Shape.Intersects(a.RegionShape.Shape)
-                );
-
-                bool exited = wasInArea && !isInArea;
-                wasInArea = isInArea;
-                return exited;
-            }
-            return false;
+            return AreaExited(out _);
         }
-
     }
 }
