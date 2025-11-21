@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ConstructEngine.Components;
-using ConstructEngine.Objects;
+using ConstructEngine.Nodes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -15,7 +15,7 @@ namespace ConstructEngine.Components
         void Draw(SpriteBatch spriteBatch);
     }
 
-    public class KinematicEntity : CTObject
+    public class KinematicEntity : Node
     {
         public static List<KinematicEntity> EntityList = new List<KinematicEntity>();
         public KinematicBase KinematicBase;

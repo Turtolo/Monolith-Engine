@@ -5,11 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using ConstructEngine.Area;
 using ConstructEngine.Graphics;
-using ConstructEngine.Managers;
-using ConstructEngine.Objects;
-using ConstructEngine.Util;
+using ConstructEngine.Nodes;
+using ConstructEngine.Region;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -101,7 +99,7 @@ namespace ConstructEngine.Directory
         }
 
         /// <summary>
-        /// Searches for CObjects within the enties layer in the level file, sets the object's values from the file.
+        /// Searches for Nodes within the enties layer in the level file, sets the object's values from the file.
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="Player"></param>
@@ -130,19 +128,18 @@ namespace ConstructEngine.Directory
                             return ex.Types.Where(t => t != null);
                         }
                     })
-                    .FirstOrDefault(t => t.IsSubclassOf(typeof(CTObject)) && t.Name == entity.name);
+                    .FirstOrDefault(t => t.IsSubclassOf(typeof(Node)) && t.Name == entity.name);
 
                 if (type != null)
                 {
-                    var obj = (CTObject)Activator.CreateInstance(type);
-                    obj.Rectangle = new(entity.x, entity.y, entity.width, entity.height);
+                    var obj = (Node)Activator.CreateInstance(type);
                     obj.Shape = new RectangleShape2D(entity.x, entity.y, entity.width, entity.height);
                     obj.Name = entity.name;
                     obj.Values = normalDict;
                 }
                 else
                 {
-                    Console.WriteLine($"Type '{entity.name}' not found or not a subclass of CObject.");
+                    Console.WriteLine($"Type '{entity.name}' not found or not a subclass of node.");
                 }
             }
         }

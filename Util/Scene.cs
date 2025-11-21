@@ -1,17 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Net.Http.Headers;
-using ConstructEngine.Components;
-using ConstructEngine.Graphics;
-using ConstructEngine.Area;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using ConstructEngine.Components;
 using ConstructEngine.Directory;
-using Gum.Forms.Controls;
-using ConstructEngine.UI;
+
 
 namespace ConstructEngine.Util
 {

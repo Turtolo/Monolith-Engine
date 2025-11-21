@@ -1,7 +1,5 @@
-using ConstructEngine.Area;
 using Microsoft.Xna.Framework;
 using System;
-using ConstructEngine.Util;
 
 namespace ConstructEngine.Graphics
 {

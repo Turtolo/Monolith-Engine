@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 
-namespace ConstructEngine.Area
+namespace ConstructEngine.Region
 {
     public interface IRegionShape2D
     {

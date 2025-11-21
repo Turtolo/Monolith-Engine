@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ConstructEngine.Area;
 using ConstructEngine.Components;
 using ConstructEngine.Directory;
 using ConstructEngine.Graphics;
-using ConstructEngine.Objects;
+using ConstructEngine.Nodes;
+using ConstructEngine.Region;
 using ConstructEngine.UI;
 using ConstructEngine.Util;
 using Microsoft.Xna.Framework;
@@ -38,7 +38,7 @@ namespace ConstructEngine.Managers
             scene.Initialize();
             scene.Load();
 
-            CTObject.LoadObjects();
+            Node.LoadObjects();
 
             GetAndSetPlayer();
 
@@ -185,7 +185,7 @@ namespace ConstructEngine.Managers
             if (!IsStackEmpty() && !_sceneFrozen)
             {
                 Engine.TweenManager.Update();
-                CTObject.UpdateObjects(gameTime);
+                Node.UpdateObjects(gameTime);
                 GetCurrentScene()?.Update(gameTime);
             }
 
@@ -205,7 +205,7 @@ namespace ConstructEngine.Managers
             {
                 Engine.SpriteManager.DrawAllSprites(spriteBatch);
                 Engine.DrawManager.DrawTilemaps(spriteBatch);
-                CTObject.DrawObjects(spriteBatch);
+                Node.DrawObjects(spriteBatch);
                 GetCurrentScene()?.Draw(spriteBatch);
             }
 
@@ -237,7 +237,7 @@ namespace ConstructEngine.Managers
         private void GetAndSetPlayer()
         {
             KinematicEntity mainCharacter =
-            CTObject.ObjectList
+            Node.AllInstances
                 .FirstOrDefault(e => e.GetType() == Engine.Instance.Config.MainCharacterType)
                 as KinematicEntity;
 
@@ -253,9 +253,8 @@ namespace ConstructEngine.Managers
             Engine.DrawManager.Tilemaps.Clear();
             KinematicEntity.EntityList.Clear();
             Engine.SpriteManager.Empty();
-            Area2D.AreaList.Clear();
-            CTObject.ObjectList.Clear();
-            RayCast2D.RayList.Clear();
+            Node.DumpAllInstances();
+            //RayCast2D.RayList.Clear();
         }
     }
 }

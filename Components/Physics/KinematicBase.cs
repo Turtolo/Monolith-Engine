@@ -1,7 +1,8 @@
+using ConstructEngine.Nodes;
+using ConstructEngine.Region;
 using Microsoft.Xna.Framework;
 using System;
-using ConstructEngine.Area;
-using ConstructEngine.Objects;
+using System.Linq;
 
 namespace ConstructEngine.Components
 {
@@ -27,10 +28,6 @@ namespace ConstructEngine.Components
 
         public KinematicBase(object root) : base(root) { }
 
-
-        // ---------------------------------------------------------
-        // UPDATE
-        // ---------------------------------------------------------
         public void UpdateCollider(GameTime gameTime)
         {
             if (!Locked)
@@ -121,7 +118,7 @@ namespace ConstructEngine.Components
             var right = Collider.Clone();
             right.Offset(1, 0);
 
-            foreach (var body in StaticBody2D.AllInstances)
+            foreach (var body in Node.AllInstances.OfType<StaticBody2D>())
             {
                 var shape = body.Shape;
 
@@ -135,7 +132,7 @@ namespace ConstructEngine.Components
 
         public bool IsColliding(IRegionShape2D shape)
         {
-            foreach (var body in StaticBody2D.AllInstances)
+            foreach (var body in Node.AllInstances.OfType<StaticBody2D>())
             {
                 if (shape.Intersects(body.Shape))
                     return true;

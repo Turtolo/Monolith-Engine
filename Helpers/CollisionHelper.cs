@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Xna.Framework;
-using ConstructEngine.Area;
 using System.Collections.Generic;
 using System.Linq;
+using ConstructEngine.Region;
 
 namespace ConstructEngine.Helpers
 {
@@ -39,6 +39,7 @@ namespace ConstructEngine.Helpers
 
             return (deltaX * deltaX + deltaY * deltaY) <= (circle.Radius * circle.Radius);
         }
+
         public static CollisionSide GetCameraEdge(IRegionShape2D target, Rectangle camera)
         {
 

@@ -1,4 +1,3 @@
-using ConstructEngine.Area;
 using Microsoft.Xna.Framework;
 using System;
 using ConstructEngine.Components;
