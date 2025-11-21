@@ -50,6 +50,15 @@ namespace ConstructEngine.Helpers
             return texture;
         }
 
+        public static void DrawRegionShape(IRegionShape2D regionShape, Color color, int thickness = 1, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
+        {
+            if (regionShape == null) return;
+            if (regionShape is RectangleShape2D rect)
+                DrawRectangle(rect, color, thickness, layerDepth, layer);
+            if (regionShape is CircleShape2D circle)
+                DrawCircle(circle, color, thickness, layerDepth, layer);
+        }
+
         public static void DrawCircle(CircleShape2D circ, Color color, int thickness = 1, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
         {
             if (circ == null) return;
@@ -67,6 +76,17 @@ namespace ConstructEngine.Helpers
                 SpriteEffects.None,
                 layerDepth
             );
+        }
+
+        public static void DrawRectangle(RectangleShape2D rect, Color color, int thickness = 1, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
+        {
+            var pixel = GetPixel(Engine.GraphicsDevice);
+
+            Engine.DrawManager.Draw(pixel,
+                new Vector2(rect.X, rect.Y),
+                color, layer, 0f, Vector2.Zero,
+                new Vector2(rect.BoundingBox.Width, rect.BoundingBox.Height),
+                SpriteEffects.None, layerDepth);
         }
 
         public static void DrawRay(Ray2D ray, Color color, float thickness = 1f, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
@@ -94,7 +114,7 @@ namespace ConstructEngine.Helpers
             );
         }
 
-        public static void DrawRectangle(Rectangle rect, Color color, int thickness = 1, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
+        public static void DrawRectangleHollow(Rectangle rect, Color color, int thickness = 1, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
         {
             var pixel = GetPixel(Engine.GraphicsDevice);
 
