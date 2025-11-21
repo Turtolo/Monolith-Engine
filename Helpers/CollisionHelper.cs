@@ -66,22 +66,22 @@ namespace ConstructEngine.Helpers
 
             if (target.HasCircle)
             {
-                if (target.Circ.Right > camera.Right)
+                if (target.Circ.BoundingBox.Right > camera.Right)
                 {
                     return CollisionSide.Right;
                 }
 
-                if (target.Circ.Left < camera.Left)
+                if (target.Circ.BoundingBox.Left < camera.Left)
                 {
                     return CollisionSide.Left;
                 }
 
-                if (target.Circ.Top < camera.Top)
+                if (target.Circ.BoundingBox.Top < camera.Top)
                 {
                     return CollisionSide.Top;
                 }
 
-                if (target.Circ.Bottom > camera.Bottom)
+                if (target.Circ.BoundingBox.Bottom > camera.Bottom)
                 {
                     return CollisionSide.Bottom;
                 }
