@@ -5,9 +5,9 @@ using Microsoft.Xna.Framework;
 
 namespace ConstructEngine.Area
 {
-    public class Ray2D
+    public class RayCast2D
     {
-        public static List<Ray2D> RayList = new();
+        public static List<RayCast2D> RayList = new();
         public Vector2 Position { get; set; }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace ConstructEngine.Area
             MathF.Sin(MathHelper.ToRadians(AngleDegrees))
         );
 
-        public Ray2D(Vector2 position, float angleDegrees, float length)
+        public RayCast2D(Vector2 position, float angleDegrees, float length)
         {
             Position = position;
             AngleDegrees = angleDegrees;
@@ -138,7 +138,7 @@ namespace ConstructEngine.Area
         /// <param name="distance"></param>
         /// <returns></returns>
 
-        private static bool RectangleIntersect(Ray2D ray, Rectangle rect, float maxLength, out Vector2 hitPoint, out float distance)
+        private static bool RectangleIntersect(RayCast2D ray, Rectangle rect, float maxLength, out Vector2 hitPoint, out float distance)
         {
             hitPoint = Vector2.Zero;
             distance = float.MaxValue;
@@ -183,7 +183,7 @@ namespace ConstructEngine.Area
         /// <param name="hitPoint"></param>
         /// <param name="distance"></param>
         /// <returns></returns>
-        private static bool CircleShape2DIntersect(Ray2D ray, CircleShape2D circ, float maxLength, out Vector2 hitPoint, out float distance)
+        private static bool CircleShape2DIntersect(RayCast2D ray, CircleShape2D circ, float maxLength, out Vector2 hitPoint, out float distance)
         {
             hitPoint = Vector2.Zero;
             distance = float.MaxValue;
@@ -218,7 +218,7 @@ namespace ConstructEngine.Area
         /// <param name="hitPoint"></param>
         /// <param name="distance"></param>
         /// <returns></returns>
-        private static bool CheckRaycast(Ray2D ray, Area2D area, float maxLength, out Vector2 hitPoint, out float distance)
+        private static bool CheckRaycast(RayCast2D ray, Area2D area, float maxLength, out Vector2 hitPoint, out float distance)
         {
             if (area.HasRect)
                 return RectangleIntersect(ray, area.Rect, maxLength, out hitPoint, out distance);

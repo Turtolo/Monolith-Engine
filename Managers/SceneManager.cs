@@ -255,7 +255,7 @@ namespace ConstructEngine.Managers
             Engine.SpriteManager.Empty();
             Area2D.AreaList.Clear();
             CTObject.ObjectList.Clear();
-            Ray2D.RayList.Clear();
+            RayCast2D.RayList.Clear();
         }
     }
 }

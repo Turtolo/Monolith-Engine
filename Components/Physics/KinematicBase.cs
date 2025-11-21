@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
 using ConstructEngine.Area;
 using ConstructEngine.Objects;
 
@@ -8,65 +7,42 @@ namespace ConstructEngine.Components
 {
     public class KinematicBase : Component
     {
-        //public Rectangle Hitbox;
-        public Area2D Collider;
+        public IRegionShape2D Collider;
         public Vector2 Velocity;
+
         private float remainderX = 0;
         private float remainderY = 0;
 
+        public bool Locked;
+
         public Vector2 Position
         {
-            get => new Vector2(Collider.Rect.X, Collider.Rect.Y);
+            get => new Vector2(Collider.X, Collider.Y);
             set
             {
-                var rect = Collider.Rect;
-                rect.X = (int)value.X;
-                rect.Y = (int)value.Y;
-                Collider.Rect = rect;
+                Collider.X = (int)value.X;
+                Collider.Y = (int)value.Y;
             }
         }
 
-
-        public bool Locked;
-
-
         public KinematicBase(object root) : base(root) { }
 
-    
-        
 
+        // ---------------------------------------------------------
+        // UPDATE
+        // ---------------------------------------------------------
         public void UpdateCollider(GameTime gameTime)
         {
             if (!Locked)
             {
-                float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                Move(Velocity.X * deltaTime, Velocity.Y * deltaTime);
-
-                foreach (var collider in Area2D.AreaList)
-                {
-
-                    if (!collider.Enabled || collider.Velocity == Vector2.Zero || collider.Root.GetType() != typeof(CollisionObject))
-                        continue;
-
-                    Rectangle feetCheck = Collider.Rect;
-                    feetCheck.Y += 1;
-
-                    if (feetCheck.Intersects(collider.Rect))
-                    {
-                        Collider.Rect.X += (int)collider.Velocity.X;
-                        Collider.Rect.Y += (int)collider.Velocity.Y;
-                    }
-                }
+                float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Move(Velocity.X * dt, Velocity.Y * dt);
             }
-
             else
             {
-                Velocity.X = 0;
-                Velocity.Y = 0;
+                Velocity = Vector2.Zero;
             }
         }
-
 
         public void Move(float moveX, float moveY)
         {
@@ -76,27 +52,25 @@ namespace ConstructEngine.Components
             MoveX(mx);
 
             remainderY += moveY;
-            
             int my = (int)MathF.Round(remainderY);
             remainderY -= my;
             MoveY(my);
-            
         }
+
 
         public void MoveX(int amount)
         {
             int sign = Math.Sign(amount);
-            
+
             while (amount != 0)
             {
-                Rectangle test = Collider.Rect;
-                
-                test.X += sign;
-                
-                
+                var test = Collider.Clone();
+                test.Offset(sign, 0);
 
                 if (!IsColliding(test))
-                    Collider.Rect = test;
+                {
+                    Collider.Offset(sign, 0);
+                }
                 else
                 {
                     Velocity.X = 0;
@@ -104,21 +78,23 @@ namespace ConstructEngine.Components
                 }
 
                 amount -= sign;
-                
-                
             }
         }
+
 
         public void MoveY(int amount)
         {
             int sign = Math.Sign(amount);
+
             while (amount != 0)
             {
-                Rectangle test = Collider.Rect;
-                test.Y += sign;
+                var test = Collider.Clone();
+                test.Offset(0, sign);
 
                 if (!IsColliding(test))
-                    Collider.Rect = test;
+                {
+                    Collider.Offset(0, sign);
+                }
                 else
                 {
                     Velocity.Y = 0;
@@ -131,42 +107,40 @@ namespace ConstructEngine.Components
 
         public bool IsOnGround()
         {
-            Rectangle test = Collider.Rect;
-            test.Y += 1;
+            var test = Collider.Clone();
+            test.Offset(0, 1);
             return IsColliding(test);
         }
 
+
         public bool IsOnWall()
         {
-            Rectangle leftCheck = Collider.Rect;
-            leftCheck.X -= 1;
+            var left = Collider.Clone();
+            left.Offset(-1, 0);
 
-            Rectangle rightCheck = Collider.Rect;
-            rightCheck.X += 1;
+            var right = Collider.Clone();
+            right.Offset(1, 0);
 
-            foreach (var collider in Area2D.AreaList)
+            foreach (var body in StaticBody2D.AllInstances)
             {
-                if (!collider.Enabled || collider.Root.GetType() != typeof(CollisionObject))
-                    continue;
+                var shape = body.Shape;
 
-                if (leftCheck.Intersects(collider.Rect) || rightCheck.Intersects(collider.Rect))
+                if (left.Intersects(shape) || right.Intersects(shape))
                     return true;
             }
 
             return false;
         }
 
-        public bool IsColliding(Rectangle rect)
+
+        public bool IsColliding(IRegionShape2D shape)
         {
-            foreach (var collider in Area2D.AreaList)
+            foreach (var body in StaticBody2D.AllInstances)
             {
-                if (!collider.Enabled || collider.Root.GetType() != typeof(CollisionObject))
-                {
-                    continue;
-                }
-                if (rect.Intersects(collider.Rect))
+                if (shape.Intersects(body.Shape))
                     return true;
             }
+
             return false;
         }
     }

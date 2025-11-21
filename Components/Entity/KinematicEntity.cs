@@ -34,7 +34,7 @@ namespace ConstructEngine.Components
         public override void Unload()
         {
             EntityList.Remove(this);
-            KinematicBase.Collider.Free();
+            //KinematicBase.Collider.Free();
         }
 
         public static void AddEntities(params KinematicEntity[] entities)

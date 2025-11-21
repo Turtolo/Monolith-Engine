@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using ConstructEngine.Area;
 using ConstructEngine.Graphics;
 using ConstructEngine.Managers;
 using ConstructEngine.Objects;
@@ -135,6 +136,7 @@ namespace ConstructEngine.Directory
                 {
                     var obj = (CTObject)Activator.CreateInstance(type);
                     obj.Rectangle = new(entity.x, entity.y, entity.width, entity.height);
+                    obj.Shape = new RectangleShape2D(entity.x, entity.y, entity.width, entity.height);
                     obj.Name = entity.name;
                     obj.Values = normalDict;
                 }

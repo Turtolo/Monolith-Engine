@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ConstructEngine.Area;
 using ConstructEngine.Components;
 using ConstructEngine.Util;
 using Microsoft.Xna.Framework;
@@ -21,6 +22,7 @@ namespace ConstructEngine.Objects
         public static Dictionary<string, IObject> ObjectDict { get; private set; } = new();
         
         public Rectangle Rectangle { get; set; }
+        public IRegionShape2D Shape {get; set;}
         public string Name { get; set; }
         public Vector2 Position {get => new Vector2(Rectangle.X, Rectangle.Y);}
         public Dictionary<string, object> Values { get; set; }

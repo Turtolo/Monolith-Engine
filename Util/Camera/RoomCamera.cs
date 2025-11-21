@@ -63,7 +63,7 @@ namespace ConstructEngine.Graphics
                     CameraRectangle.X -= CameraRectangle.Width;
 
                     targetEntity.KinematicBase.Locked = true;
-                    targetEntity.KinematicBase.Collider.Rect.X -= 10;
+                    targetEntity.KinematicBase.Collider.X -= 10;
 
                     cameraXTween = new Tween(
                         0.5f,
@@ -82,7 +82,7 @@ namespace ConstructEngine.Graphics
                     CameraRectangle.X += CameraRectangle.Width;
 
                     targetEntity.KinematicBase.Locked = true;
-                    targetEntity.KinematicBase.Collider.Rect.X += 10;
+                    targetEntity.KinematicBase.Collider.X += 10;
 
                     cameraXTween = new Tween(
                         0.5f,

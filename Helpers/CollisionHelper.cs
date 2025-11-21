@@ -39,53 +39,29 @@ namespace ConstructEngine.Helpers
 
             return (deltaX * deltaX + deltaY * deltaY) <= (circle.Radius * circle.Radius);
         }
-        public static CollisionSide GetCameraEdge(Area2D target, Rectangle camera)
+        public static CollisionSide GetCameraEdge(IRegionShape2D target, Rectangle camera)
         {
-            if (target.HasRect)
+
+            if (target.BoundingBox.Right > camera.Right)
             {
-                if (target.Rect.Right > camera.Right)
-                {
-                    return CollisionSide.Right;
-                }
-
-                if (target.Rect.Left < camera.Left)
-                {
-                    return CollisionSide.Left;
-                }
-
-                if (target.Rect.Top < camera.Top)
-                {
-                    return CollisionSide.Top;
-                }
-
-                if (target.Rect.Bottom > camera.Bottom)
-                {
-                    return CollisionSide.Bottom;
-                }
+                return CollisionSide.Right;
             }
 
-            if (target.HasCircle)
+            if (target.BoundingBox.Left < camera.Left)
             {
-                if (target.Circ.BoundingBox.Right > camera.Right)
-                {
-                    return CollisionSide.Right;
-                }
-
-                if (target.Circ.BoundingBox.Left < camera.Left)
-                {
-                    return CollisionSide.Left;
-                }
-
-                if (target.Circ.BoundingBox.Top < camera.Top)
-                {
-                    return CollisionSide.Top;
-                }
-
-                if (target.Circ.BoundingBox.Bottom > camera.Bottom)
-                {
-                    return CollisionSide.Bottom;
-                }
+                return CollisionSide.Left;
             }
+
+            if (target.BoundingBox.Top < camera.Top)
+            {
+                return CollisionSide.Top;
+            }
+
+            if (target.BoundingBox.Bottom > camera.Bottom)
+            {
+                return CollisionSide.Bottom;
+            }
+            
 
             return CollisionSide.None;
         }

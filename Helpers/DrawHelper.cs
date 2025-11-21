@@ -89,7 +89,7 @@ namespace ConstructEngine.Helpers
                 SpriteEffects.None, layerDepth);
         }
 
-        public static void DrawRay(Ray2D ray, Color color, float thickness = 1f, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
+        public static void DrawRay(RayCast2D ray, Color color, float thickness = 1f, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
         {
             var pixel = GetPixel(Engine.GraphicsDevice);
 
