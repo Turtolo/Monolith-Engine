@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using ConstructEngine.Graphics;
+using ConstructEngine.Managers;
 using ConstructEngine.Nodes;
 using ConstructEngine.Region;
 using Microsoft.Xna.Framework;
@@ -133,6 +134,7 @@ namespace ConstructEngine.Directory
                 if (type != null)
                 {
                     var obj = (Node)Activator.CreateInstance(type);
+                    obj.Root = Engine.SceneManager.GetCurrentScene();
                     obj.Shape = new RectangleShape2D(entity.x, entity.y, entity.width, entity.height);
                     obj.Name = entity.name;
                     obj.Values = normalDict;

@@ -5,11 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ConstructEngine.Components
 {
-    public class BackseatComponent : Component
+    public class BackseatComponent
     {
         public static List<BackseatComponent> BackseatComponentList = new();
 
-        public BackseatComponent(object root) : base(root)
+        public BackseatComponent()
         {
             BackseatComponentList.Add(this);
         }

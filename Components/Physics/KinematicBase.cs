@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace ConstructEngine.Components
 {
-    public class KinematicBase : Component
+    public class KinematicBase
     {
         public IRegionShape2D Collider;
         public Vector2 Velocity;
@@ -26,7 +26,7 @@ namespace ConstructEngine.Components
             }
         }
 
-        public KinematicBase(object root) : base(root) { }
+        public KinematicBase() {}
 
         public void UpdateCollider(GameTime gameTime)
         {

@@ -91,7 +91,7 @@ namespace ConstructEngine.Region
         /// <param name="areas"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        public bool CheckIntersection(IEnumerable<RegionNode> regions, Type target)
+        public bool CheckIntersection(IEnumerable<RegionNode> regions)
         {
             float maxLength = Length;
             float closestDistance = float.MaxValue;
@@ -100,8 +100,6 @@ namespace ConstructEngine.Region
 
             foreach (var region in regions)
             {
-                if (region.RootType != target) continue;
-
                 Vector2 currentHitPoint;
                 float currentDistance;
                 bool hit = false;

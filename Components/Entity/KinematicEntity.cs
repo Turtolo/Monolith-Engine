@@ -25,7 +25,7 @@ namespace ConstructEngine.Components
         {
             EntityList.Add(this);
             DamageAmount = damageAmount;
-            KinematicBase = new KinematicBase(this);
+            KinematicBase = new KinematicBase();
         }
 
         public override void Load() { }

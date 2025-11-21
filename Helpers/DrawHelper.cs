@@ -59,6 +59,31 @@ namespace ConstructEngine.Helpers
                 DrawCircle(circle, color, thickness, layerDepth, layer);
         }
 
+        public static void DrawRay(RayCast2D ray, Color color, float thickness = 1f, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
+        {
+            var pixel = GetPixel(Engine.GraphicsDevice);
+
+            Color drawColor = ray.HasHit
+                ? ColorHelper.GetOppositeColor(color)
+                : color;
+
+            Vector2 end = ray.Position + ray.Direction * ray.Length;
+            Vector2 edge = end - ray.Position;
+            float angle = (float)Math.Atan2(edge.Y, edge.X);
+
+            Engine.DrawManager.Draw(
+                pixel,
+                ray.Position,
+                drawColor,
+                layer,
+                angle,
+                Vector2.Zero,
+                new Vector2(edge.Length(), thickness),
+                SpriteEffects.None,
+                layerDepth
+            );
+        }
+
         public static void DrawCircle(CircleShape2D circ, Color color, int thickness = 1, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
         {
             if (circ == null) return;

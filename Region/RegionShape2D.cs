@@ -8,7 +8,7 @@ namespace ConstructEngine.Region
     {
         int X { get; set; }
         int Y { get; set; }
-
+        
         Point Location { get; set; }
         void Offset(int x, int y);
 
