@@ -17,11 +17,6 @@ namespace ConstructEngine.Managers
         UI
     }
 
-    public enum CSpriteEffects
-    {
-        
-    }
-
     /// <summary>
     /// Represents a single batched sprite draw call containing all rendering
     /// parameters needed to draw a texture using SpriteBatch.

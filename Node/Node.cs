@@ -10,58 +10,31 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace ConstructEngine.Nodes
 {
-    /// <summary>
-    /// Represents a core engine “Node” which tracks a root object,
-    /// region shape, metadata, and participates in load, update, and draw cycles.
-    /// </summary>
-    public class Node
+    public abstract class Node
     {
         private static readonly List<Node> allInstances = new();
         private static readonly Dictionary<string, Node> allInstancesDetailed = new();
 
-        /// <summary>
-        /// Gets a read-only list of all Node instances currently tracked.
-        /// </summary>
-        public static IReadOnlyList<Node> AllInstances => allInstances.AsReadOnly();
+        private static readonly List<Node> pendingAdds = new();
+        private static readonly List<Node> pendingRemovals = new();
 
-        /// <summary>
-        /// Gets a read-only dictionary mapping names to Node instances.
-        /// Useful for quick lookup or engine debugging.
-        /// </summary>
+
+        public static IReadOnlyList<Node> AllInstances => allInstances.AsReadOnly();
         public static IReadOnlyDictionary<string, Node> AllInstancesDetailed 
             => new ReadOnlyDictionary<string, Node>(allInstancesDetailed);
-
-        /// <summary>
-        /// The root object associated with this node. Defaults to the node itself.
-        /// </summary>
         public object Root { get; internal set; }
-        
-        /// <summary>
-        /// The type of the root object. Automatically set in constructor.
-        /// </summary>
         public Type RootType { get =>  Root?.GetType(); }
-
-        /// <summary>
-        /// Optional shape that defines a 2D region for collisions or spatial logic.
-        /// </summary>
         public IRegionShape2D Shape { get; set; }
-
-        /// <summary>
-        /// Optional name for indexing and debugging.
-        /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Arbitrary metadata associated with the node.
-        /// </summary>
         public Dictionary<string, object> Values { get; set; } = new();
+
 
         /// <summary>
         /// Creates a new Node with itself as the root object.
         /// </summary>
         public Node()
         {
-            allInstances.Add(this);
+            QueueAdd(this);
         }
 
         /// <summary>
@@ -69,17 +42,42 @@ namespace ConstructEngine.Nodes
         /// </summary>
         public Node(object root)
         {
-            allInstances.Add(this);
             Root = root;
+            QueueAdd(this);
+        }
+
+        /// <summary>
+        /// Queues a node for addition to the main instance list.
+        /// </summary>
+        private static void QueueAdd(Node node) => pendingAdds.Add(node);
+
+        /// <summary>
+        /// Queues a node for removal from the main instance list.
+        /// </summary>
+        public void QueeFree() => pendingRemovals.Add(this);
+
+        /// <summary>
+        /// Applies queued additions and removals before or after each lifecycle step.
+        /// </summary>
+        private static void ApplyPendingChanges()
+        {
+            if (pendingAdds.Count > 0)
+            {
+                allInstances.AddRange(pendingAdds);
+                pendingAdds.Clear();
+            }
+
+            if (pendingRemovals.Count > 0)
+            {
+                foreach (var n in pendingRemovals)
+                    allInstances.Remove(n);
+                pendingRemovals.Clear();
+            }
         }
 
         public virtual void Load() { }
         public virtual void Unload() { }
         public virtual void Update(GameTime gameTime) { }
-
-        /// <summary>
-        /// Called every frame for rendering. Use SpriteBatch for drawing.
-        /// </summary>
         public virtual void Draw(SpriteBatch spriteBatch) { }
 
         /// <summary>
@@ -87,8 +85,13 @@ namespace ConstructEngine.Nodes
         /// </summary>
         public static void LoadObjects()
         {
-            foreach (var o in allInstances.ToList())
-                o.Load();
+            ApplyPendingChanges();
+
+            for (int i = 0; i < allInstances.Count; i++)
+            {
+                allInstances[i].Load();
+                ApplyPendingChanges();
+            }
         }
 
         /// <summary>
@@ -96,8 +99,13 @@ namespace ConstructEngine.Nodes
         /// </summary>
         public static void UnloadObjects()
         {
-            foreach (var o in allInstances.ToList())
-                o.Unload();
+            ApplyPendingChanges();
+
+            for (int i = 0; i < allInstances.Count; i++)
+            {
+                allInstances[i].Unload();
+                ApplyPendingChanges();
+            }
         }
 
         /// <summary>
@@ -105,8 +113,13 @@ namespace ConstructEngine.Nodes
         /// </summary>
         public static void UpdateObjects(GameTime gameTime)
         {
-            foreach (var o in allInstances.ToList())
-                o.Update(gameTime);
+            ApplyPendingChanges();
+
+            for (int i = 0; i < allInstances.Count; i++)
+            {
+                allInstances[i].Update(gameTime);
+                ApplyPendingChanges();
+            }
         }
 
         /// <summary>
@@ -114,8 +127,10 @@ namespace ConstructEngine.Nodes
         /// </summary>
         public static void DrawObjects(SpriteBatch spriteBatch)
         {
-            foreach (var o in allInstances.ToList())
-                o.Draw(spriteBatch);
+            for (int i = 0; i < allInstances.Count; i++)
+            {
+                allInstances[i].Draw(spriteBatch);
+            }
         }
 
         public static void DumpAllInstances()
