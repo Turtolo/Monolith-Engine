@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace ConstructEngine.Directory
+namespace ConstructEngine.IO
 {
     public static class OgmoParser
     {

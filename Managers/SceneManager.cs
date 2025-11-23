@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using ConstructEngine.Directory;
+using ConstructEngine.IO;
 using ConstructEngine.Graphics;
 using ConstructEngine.Nodes;
 using ConstructEngine.Region;
 using ConstructEngine.UI;
 using ConstructEngine.Util;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
