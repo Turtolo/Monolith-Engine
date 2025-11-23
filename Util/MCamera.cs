@@ -4,17 +4,16 @@ using Gum.DataTypes.Variables;
 using Microsoft.Xna.Framework;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
-namespace Monolith.Graphics
+namespace Monolith.Util
 {
-    public class CTCamera
+    public class MCamera
     {
-        
         public Vector2 cameraPosition = Vector2.Zero;
         public float Zoom;
-        public static CTCamera CurrentCamera;
+        public static MCamera CurrentCamera;
         public Matrix Transform;
         
-        public CTCamera()
+        public MCamera()
         {
             CurrentCamera = this;
         }

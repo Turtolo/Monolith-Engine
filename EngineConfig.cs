@@ -53,6 +53,11 @@ namespace Monolith
         public bool Fullscreen { get; init; } = true;
 
         /// <summary>
+        /// Wheter the game starts in debug mode.
+        /// </summary>
+        public bool DebugMode { get; init; } = false;
+
+        /// <summary>
         /// Whether the image is scaled using only integer values
         /// to preserve pixel accuracy.
         /// Default: true

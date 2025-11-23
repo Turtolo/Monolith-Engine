@@ -1,9 +1,9 @@
 using Microsoft.Xna.Framework;
 using System;
 
-namespace Monolith.Graphics
+namespace Monolith.Util
 {
-    public class FollowCamera : CTCamera
+    public class FollowCamera : MCamera
     {
         public bool XEnabled = true;
         public bool YEnabled = true;

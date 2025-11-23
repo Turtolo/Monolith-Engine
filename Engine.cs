@@ -12,6 +12,8 @@ using Monolith.UI;
 using Monolith.Managers;
 using Monolith.Graphics;
 using Monolith.Nodes;
+using Monolith.Helpers;
+using Monolith.Util;
 
 namespace Monolith
 {
@@ -109,7 +111,8 @@ namespace Monolith
         private int finalWidth, finalHeight;
         private int offsetX, offsetY;
         private float currentScale;
-
+        private bool drawRegions;
+        private bool showDebugScreen;
         private bool quit;
 
         /// <summary>
@@ -199,10 +202,12 @@ namespace Monolith
             SceneManager.UpdateCurrentScene(gameTime);
             GumManager.UpdateAll(gameTime);
             GumUI?.Update(this, gameTime);
-            
 
-            if (CTCamera.CurrentCamera != null)
-                DrawManager.SetCamera(CTCamera.CurrentCamera.Transform);
+            if (Config.DebugMode)
+                Debug.DebugLogic();
+            
+            if (MCamera.CurrentCamera != null)
+                DrawManager.SetCamera(MCamera.CurrentCamera.Transform);
 
             base.Update(gameTime);
         }
@@ -218,6 +223,8 @@ namespace Monolith
             GraphicsDevice.Clear(Color.DarkSlateGray);
 
             SceneManager.DrawCurrentScene(SpriteBatch);
+            if(Config.DebugMode)
+                Debug.DrawGeneralNodeInfo();
 
             DrawManager.Flush();
 

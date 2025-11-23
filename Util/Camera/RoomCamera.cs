@@ -5,9 +5,9 @@ using Monolith.Helpers;
 using Monolith.Util;
 using Monolith.Nodes;
 
-namespace Monolith.Graphics
+namespace Monolith.Util
 {
-    public class RoomCamera : CTCamera
+    public class RoomCamera : MCamera
     {
         private Tween cameraXTween;
         private Tween cameraYTween;

@@ -118,56 +118,83 @@ namespace Monolith.Managers
         {
             foreach (DrawLayer layer in Enum.GetValues(typeof(DrawLayer)))
             {
+                if (layer == DrawLayer.UI) continue;
+
                 var queue = _drawQueues[layer];
                 if (queue.Count == 0) continue;
 
-                var cameraCalls = queue.FindAll(c => c.UseCamera);
-                var screenCalls = queue.FindAll(c => !c.UseCamera);
+                _spriteBatch.Begin(
+                    SpriteSortMode.BackToFront,
+                    BlendState.AlphaBlend,
+                    SamplerState.PointClamp,
+                    transformMatrix: _cameraTransform
+                );
 
-                if (cameraCalls.Count > 0)
-                {
-                    _spriteBatch.Begin(
-                        SpriteSortMode.BackToFront,
-                        BlendState.AlphaBlend,
-                        SamplerState.PointClamp,
-                        transformMatrix: layer == DrawLayer.UI ? Matrix.Identity : _cameraTransform
-                    );
+                foreach (var call in queue)
+                    DrawInternal(call);
 
-                    foreach (var call in cameraCalls)
-                        DrawInternal(call);
-
-                    _spriteBatch.End();
-                }
-
-                // 2. Draw screen-space sprites (no camera)
-                if (screenCalls.Count > 0)
-                {
-                    _spriteBatch.Begin(
-                        SpriteSortMode.BackToFront,
-                        BlendState.AlphaBlend,
-                        SamplerState.PointClamp,
-                        transformMatrix: Matrix.Identity
-                    );
-
-                    foreach (var call in screenCalls)
-                        DrawInternal(call);
-
-                    _spriteBatch.End();
-                }
-
+                _spriteBatch.End();
                 queue.Clear();
+            }
+
+            var uiQueue = _drawQueues[DrawLayer.UI];
+            if (uiQueue.Count > 0)
+            {
+                _spriteBatch.Begin(
+                    SpriteSortMode.BackToFront,
+                    BlendState.AlphaBlend,
+                    SamplerState.PointClamp,
+                    transformMatrix: Matrix.Identity
+                );
+
+                foreach (var call in uiQueue)
+                    DrawInternal(call);
+
+                _spriteBatch.End();
+                uiQueue.Clear();
             }
         }
 
         private void DrawInternal(DrawCall call)
         {
-            Rectangle src = call.SourceRectangle ??
-                            new Rectangle(0, 0, call.Texture.Width, call.Texture.Height);
+            if (call.Texture == null) return;
 
-            if (call.LoopX)
-                src.X = ((int)call.Offset.X) % call.Texture.Width;
-            if (call.LoopY)
-                src.Y = ((int)call.Offset.Y) % call.Texture.Height;
+            Rectangle src = call.SourceRectangle ?? new Rectangle(0, 0, call.Texture.Width, call.Texture.Height);
+
+            if (call.LoopX || call.LoopY)
+            {
+                int tileWidth = src.Width;
+                int tileHeight = src.Height;
+
+                int startX = call.LoopX ? (int)(-call.Offset.X % tileWidth) : 0;
+                int startY = call.LoopY ? (int)(-call.Offset.Y % tileHeight) : 0;
+
+                int screenWidth = (int)_spriteBatch.GraphicsDevice.Viewport.Width;
+                int screenHeight = (int)_spriteBatch.GraphicsDevice.Viewport.Height;
+
+                for (int x = startX; x < screenWidth; x += tileWidth)
+                {
+                    for (int y = startY; y < screenHeight; y += tileHeight)
+                    {
+                        _spriteBatch.Draw(
+                            call.Texture,
+                            new Vector2(call.Position.X + x, call.Position.Y + y),
+                            src,
+                            call.Color,
+                            call.Rotation,
+                            call.Origin,
+                            call.Scale,
+                            call.Effects,
+                            call.LayerDepth
+                        );
+                    }
+                }
+
+                return;
+            }
+
+            if (call.Effect != null)
+                _spriteBatch.Begin(effect: call.Effect);
 
             _spriteBatch.Draw(
                 call.Texture,
@@ -180,7 +207,9 @@ namespace Monolith.Managers
                 call.Effects,
                 call.LayerDepth
             );
-        }
 
+            if (call.Effect != null)
+                _spriteBatch.End();
+        }
     }
 }
