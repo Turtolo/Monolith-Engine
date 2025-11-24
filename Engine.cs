@@ -15,7 +15,6 @@ using Monolith.Nodes;
 using Monolith.Helpers;
 using Monolith.Util;
 using Monolith.Debugger;
-using static Monolith.Debugger.Debug;
 
 namespace Monolith
 {
@@ -104,11 +103,6 @@ namespace Monolith
         /// Manager handling input from keyboard, mouse, and other devices.
         /// </summary>
         public static InputManager Input { get; private set; }
-
-        /// <summary>
-        /// Configuration for debug overlay and commands.
-        /// </summary>
-        public static DebugConfig DebugConfig { get; set; }
 
         /// <summary>
         /// Gum UI service for managing user interfaces built with Gum.
@@ -201,7 +195,11 @@ namespace Monolith
                 InitializeGum(Config.GumProject);
             
             if (Config.DebugMode)
-                Debug.Initialize();
+            {
+                DebugManager.AddPanel(new DebugSetup.NodePanel(), DebugManager.AnchorPoint.TopLeft);
+                DebugManager.AddPanel(new DebugSetup.RegionPanel(), DebugManager.AnchorPoint.BottomLeft);
+            }
+
 
             LoadRenderTarget();
             UpdateRenderTargetTransform();
@@ -236,7 +234,7 @@ namespace Monolith
             }
 
             if (Config.DebugMode)
-                Debug.Update();
+                DebugManager.Update();
             
             if (MCamera.CurrentCamera != null)
                 DrawManager.SetCamera(MCamera.CurrentCamera.Transform);
@@ -257,7 +255,7 @@ namespace Monolith
             SceneManager.DrawCurrentScene(SpriteBatch);
 
             if(Config.DebugMode)
-                Debug.Draw();
+                DebugManager.Draw();
 
             DrawManager.Flush();
 
