@@ -88,8 +88,19 @@ namespace Monolith.Managers
 
             var childNodes = allInstances.Where(n => n.Root == node).ToList();
             foreach (var child in childNodes)
-                QueueRemove(child);
+                RemoveNode(child);
         }
+
+        /// <summary>
+        /// Removes a node immediately.
+        /// </summary>
+        /// <param name="node"></param>
+        internal static void RemoveImmediate(Node node)
+        {
+            RemoveNode(node);
+        }
+
+
 
         /// <summary>
         /// Invokes load on all tracked nodes.

@@ -14,7 +14,6 @@ using Monolith.Graphics;
 using Monolith.Nodes;
 using Monolith.Helpers;
 using Monolith.Util;
-using Monolith.Debugger;
 using System.Diagnostics;
 
 namespace Monolith
@@ -195,14 +194,6 @@ namespace Monolith
 
             if (!string.IsNullOrEmpty(Config.GumProject))
                 InitializeGum(Config.GumProject);
-            
-
-            DebugManager.AddPanel(new DebugSetup.NodePanel(), DebugManager.AnchorPoint.TopLeft);
-            DebugManager.AddPanel(new DebugSetup.RegionPanel(), DebugManager.AnchorPoint.BottomLeft);
-            DebugManager.AddPanel(new DebugSetup.KeybindPanel(), DebugManager.AnchorPoint.TopRight);
-            DebugManager.AddCommand(Keys.T, () => drawRegions = !drawRegions);
-            DebugManager.AddCommand(Keys.R, () => SceneManager.ReloadCurrentScene());
-            DebugManager.AddCommand(Keys.U, () => DebugManager.PanelsVisible = !DebugManager.PanelsVisible);
 
             LoadRenderTarget();
             UpdateRenderTargetTransform();
@@ -236,8 +227,6 @@ namespace Monolith
                 _fpsTimer = 0;
             }
 
-            if (Config.DebugMode)
-                DebugManager.Update();
             
             if (MCamera.CurrentCamera != null)
                 DrawManager.SetCamera(MCamera.CurrentCamera.Transform);
@@ -257,8 +246,7 @@ namespace Monolith
 
             SceneManager.DrawCurrentScene(SpriteBatch);
 
-            if(Config.DebugMode)
-                DebugManager.Draw();
+            DebugOverlay.Draw(SpriteBatch);
             
             if (drawRegions)
                 foreach(var node in NodeManager.AllInstances) node.DrawShapeHollow(Color.Red);

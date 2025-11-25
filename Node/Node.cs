@@ -56,10 +56,19 @@ namespace Monolith.Nodes
         /// <summary>
         /// Queues a node for removal from the main instance list and clears its data.
         /// </summary>
-        public void QueeFree()
+        public void QueueFree()
         {
             NodeManager.QueueRemove(this);
         }
+
+        /// <summary>
+        /// Removes the instance of this node immediately.
+        /// </summary>
+        public void FreeImmediate()
+        {
+            NodeManager.RemoveImmediate(this);
+        }
+
 
         /// <summary>
         /// Clears the node's data to help with memory management.
