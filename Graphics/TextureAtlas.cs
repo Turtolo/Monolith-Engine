@@ -115,7 +115,9 @@ namespace Monolith.Graphics
                     // The <Texture> element contains the content path for the Texture2D to load.
                     // So we will retrieve that value then use the content manager to load the texture.
                     string texturePath = texPath;
-                    atlas.Texture = content.Load<Texture2D>(texturePath);
+                    //atlas.Texture = content.Load<Texture2D>(texturePath);
+
+                    atlas.Texture = Engine.AssetLoader.LoadTexture(texturePath);
 
                     // The <Regions> element contains individual <Region> elements, each one describing
                     // a different texture region within the atlas.  

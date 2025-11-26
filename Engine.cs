@@ -71,6 +71,38 @@ namespace Monolith
         public static new ContentManager Content { get; private set; }
 
         /// <summary>
+        /// Enum of asset loaders.
+        /// </summary>
+        public enum LoaderType
+        {
+            Runtime,
+            ContentPipeline
+        }
+
+        /// <summary>
+        /// Switcher for asset loader types.
+        /// </summary>
+        public static LoaderType AssetLoaderType
+        {
+            get => _loaderType;
+            set
+            {
+                _loaderType = value;
+                _currentLoader = value switch
+                {
+                    LoaderType.Runtime => new RuntimeAssetLoader(GraphicsDevice),
+                    LoaderType.ContentPipeline => new ContentPipelineAssetLoader(Content),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+            }
+        }
+
+        /// <summary>
+        /// Current asset loader.
+        /// </summary>
+        public static IAssetLoader AssetLoader => _currentLoader;
+
+        /// <summary>
         /// The main SpriteBatch used for drawing sprites.
         /// </summary>
         public static SpriteBatch SpriteBatch { get; private set; }
@@ -110,14 +142,16 @@ namespace Monolith
         /// </summary>
         public static float DeltaTime { get; private set; }
 
-        private int finalWidth, finalHeight;
-        private int offsetX, offsetY;
-        private float currentScale;
-        private bool quit;
+        private int _finalWidth, _finalHeight;
+        private int _offsetX, _offsetY;
+        private float _currentScale;
+        private bool _quit;
         private int _fpsFrames;
         private bool drawRegions;
         private double _fpsTimer;
 
+        private static IAssetLoader _currentLoader;
+        private static LoaderType _loaderType;
 
         /// <summary>
         /// Initializes a new instance of the Engine class with the specified configuration.
@@ -138,6 +172,8 @@ namespace Monolith
 
             Content = base.Content;
             Content.RootDirectory = Config.RootContentDirectory;
+
+            AssetLoaderType = Config.AssetLoaderType;
 
             Window.AllowUserResizing = Config.AllowUserResizing;
             Window.IsBorderless = Config.IsBorderless;
@@ -222,7 +258,7 @@ namespace Monolith
             DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Input.Update(gameTime);
 
-            if ((Config.ExitOnEscape && Input.Keyboard.IsKeyDown(Keys.Escape)) || quit)
+            if ((Config.ExitOnEscape && Input.Keyboard.IsKeyDown(Keys.Escape)) || _quit)
                 Exit();
 
             
@@ -277,7 +313,7 @@ namespace Monolith
 
             SpriteBatch.Draw(
                 RenderTarget,
-                new Rectangle(offsetX, offsetY, finalWidth, finalHeight),
+                new Rectangle(_offsetX, _offsetY, _finalWidth, _finalHeight),
                 Color.White);
 
             SpriteBatch.End();
@@ -314,19 +350,19 @@ namespace Monolith
         {
             var pp = GraphicsDevice.PresentationParameters;
 
-            currentScale = Math.Min(
+            _currentScale = Math.Min(
                 pp.BackBufferWidth / (float)Config.RenderWidth,
                 pp.BackBufferHeight / (float)Config.RenderHeight
             );
 
             if (Config.IntegerScaling)
-                currentScale = Math.Max(1, MathF.Floor(currentScale));
+                _currentScale = Math.Max(1, MathF.Floor(_currentScale));
 
-            finalWidth = (int)(Config.RenderWidth * currentScale);
-            finalHeight = (int)(Config.RenderHeight * currentScale);
+            _finalWidth = (int)(Config.RenderWidth * _currentScale);
+            _finalHeight = (int)(Config.RenderHeight * _currentScale);
 
-            offsetX = (pp.BackBufferWidth - finalWidth) / 2;
-            offsetY = (pp.BackBufferHeight - finalHeight) / 2;
+            _offsetX = (pp.BackBufferWidth - _finalWidth) / 2;
+            _offsetY = (pp.BackBufferHeight - _finalHeight) / 2;
         }
 
         /// <summary>
@@ -348,9 +384,9 @@ namespace Monolith
             if (GumUI == null) return;
 
             var cam = SystemManagers.Default.Renderer.Camera;
-            cam.Zoom = currentScale;
-            cam.X = -offsetX / currentScale;
-            cam.Y = -offsetY / currentScale;
+            cam.Zoom = _currentScale;
+            cam.X = -_offsetX / _currentScale;
+            cam.Y = -_offsetY / _currentScale;
 
             GraphicalUiElement.CanvasWidth = Config.RenderWidth;
             GraphicalUiElement.CanvasHeight = Config.RenderHeight;
@@ -370,6 +406,6 @@ namespace Monolith
         /// <summary>
         /// Signals the engine to quit on the next update cycle.
         /// </summary>
-        public static void Quit() => Instance.quit = true;
+        public static void Quit() => Instance._quit = true;
     }
 }

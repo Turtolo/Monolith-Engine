@@ -116,6 +116,13 @@ namespace Monolith
         public string GumProject { get; init; } = null;
 
         /// <summary>
+        /// Path to the assets folder.
+        /// </summary>
+        public string AssetsFolder { get; init; } = "Content";
+
+        public Engine.LoaderType AssetLoaderType {get; init; } = Engine.LoaderType.ContentPipeline;
+
+        /// <summary>
         /// The main character type.
         /// Example: typeof(PlayerCharacter)
         /// </summary>
