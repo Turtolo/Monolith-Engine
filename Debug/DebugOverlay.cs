@@ -22,6 +22,11 @@ public static class DebugOverlay
 
     }
 
+    public static void ToggleOverlay()
+    {
+        IsEnabled = !IsEnabled;
+    }
+
     public static void AddInfo(string key, Func<string> infoFunc, Color color, Side side = Side.Left)
     {
         debugInfos[key] = new DebugEntry
@@ -47,7 +52,7 @@ public static class DebugOverlay
         if (!IsEnabled || Engine.Font == null)
             return;
 
-        spriteBatch.Begin();
+        spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend);
 
         int yLeft = 10;
         int yRight = 10;
@@ -68,13 +73,33 @@ public static class DebugOverlay
             switch (entry.Side)
             {
                 case Side.Left:
-                    spriteBatch.DrawString(Engine.Font, text, new Vector2(10, yLeft), entry.Color);
+                    spriteBatch.DrawString(
+                        Engine.Font,
+                        text,
+                        new Vector2(10, yLeft),
+                        entry.Color,
+                        0.0f,
+                        Vector2.Zero,
+                        1.0f,
+                        SpriteEffects.None,
+                        0.0f
+                    );
                     yLeft += 20;
                     break;
 
                 case Side.Right:
                     Vector2 textSize = Engine.Font.MeasureString(text);
-                    spriteBatch.DrawString(Engine.Font, text, new Vector2(screenWidth - textSize.X - 10, yRight), entry.Color);
+                    spriteBatch.DrawString(
+                        Engine.Font,
+                        text,
+                        new Vector2(screenWidth - textSize.X - 10, yRight),
+                        entry.Color,
+                        0.0f,
+                        Vector2.Zero,
+                        1.0f,
+                        SpriteEffects.None,
+                        0.0f
+                    );
                     yRight += 20;
                     break;
             }

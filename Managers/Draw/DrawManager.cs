@@ -229,7 +229,6 @@ namespace Monolith.Managers
                 var queue = _queues[layer];
                 if (queue.Count == 0) continue;
 
-                // Draw UI with identity camera regardless of UseCamera flag.
                 var groups = queue
                     .GroupBy(c => (layer == DrawLayer.UI) ? (UseCamera: false, Effect: c.Effect) : (UseCamera: c.UseCamera, Effect: c.Effect));
 
@@ -262,7 +261,6 @@ namespace Monolith.Managers
 
             if (call.LoopX || call.LoopY)
             {
-                // Compute tiling ranges based on the provided Offset and screen size.
                 int tileW = src.Width;
                 int tileH = src.Height;
 

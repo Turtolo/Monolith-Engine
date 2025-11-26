@@ -168,13 +168,13 @@ namespace Monolith
 
             DebugOverlay.AddInfo("Spacer", () => "", Color.White);
 
-            DebugOverlay.AddInfo("PlayerPosition", () => NodeManager.GetNodeByName("Player") is var p2 && p2 != null ? $"Player Position: {p2.Location}" : "Player Position: <null>", Color.Aqua);
-            
-            DebugOverlay.AddInfo("Spacer", () => "", Color.White);
-
             DebugOverlay.AddInfo("KeybindU", () => "U: Toggle Debug", Color.Yellow, DebugOverlay.Side.Right);
             DebugOverlay.AddInfo("KeybindR", () => "R: Reload Scene", Color.Yellow, DebugOverlay.Side.Right);
             DebugOverlay.AddInfo("KeybindT", () => "T: Toggle Regions", Color.Yellow, DebugOverlay.Side.Right);
+
+            DebugTools.AddShortcut(Keys.U, () => DebugOverlay.ToggleOverlay());
+            DebugTools.AddShortcut(Keys.R, () => SceneManager.ReloadCurrentScene());
+            DebugTools.AddShortcut(Keys.T, () => DebugTools.ToggleRegions());
         }
 
 
@@ -208,6 +208,8 @@ namespace Monolith
 
             if (!string.IsNullOrEmpty(Config.GumProject))
                 InitializeGum(Config.GumProject);
+            
+
             if (Config.DebugMode)
                 InitializeDebug();
             
@@ -232,6 +234,8 @@ namespace Monolith
             GumManager.UpdateAll(gameTime);
             GumUI?.Update(this, gameTime);
 
+            if (Config.DebugMode)
+                DebugTools.Update();
 
             _fpsTimer += gameTime.ElapsedGameTime.TotalSeconds;
             _fpsFrames++;
@@ -263,9 +267,6 @@ namespace Monolith
             DebugOverlay.Draw(SpriteBatch);
             
             SceneManager.DrawCurrentScene(SpriteBatch);
-            
-            if (drawRegions)
-                foreach(var node in NodeManager.AllInstances) node.DrawShapeHollow(Color.Red);
 
             DrawManager.Flush();
 
