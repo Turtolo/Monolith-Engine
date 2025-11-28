@@ -6,17 +6,16 @@ using Monolith;
 
 namespace Monolith.Nodes
 {   
-    public class Sprite2DValues
-    {
-        public MTexture Texture { get; set; } = default!;
-        public Vector2 Scale { get; set; } = Vector2.One;
-        public float Rotation { get; set; } = 0f;
-        public Color Modulate { get; set; } = Color.White;
-    }
-
-
     public class Sprite2D : Node
     {
+        public record ValuesData
+        (
+            MTexture Texture,
+            Vector2 Scale,
+            float Rotation = 0f,
+            Color Modulate = default
+        );
+        
         public MTexture Texture { get; private set; }
         public Color Modulate { get; set; } = Color.White;
         public Vector2 Scale { get; set; } = Vector2.One;
@@ -24,7 +23,7 @@ namespace Monolith.Nodes
 
         public Sprite2D(NodeConfig config) : base(config)
         {
-            var values = GetValues<Sprite2DValues>(); // ✅ strongly typed
+            var values = GetValues<ValuesData>();
 
             Texture = values.Texture;
             Scale = values.Scale;

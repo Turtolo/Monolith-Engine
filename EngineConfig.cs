@@ -149,7 +149,7 @@ namespace Monolith
         public required object Parent { get; init; }
 
         /// <summary>
-        /// The shape that the object has.
+        /// The shape of the node.
         /// </summary>
         public required IRegionShape2D Shape { get; init; }
 
@@ -158,28 +158,12 @@ namespace Monolith
         /// </summary>
         public required string Name { get; init; }
 
-        private Dictionary<string, object> _values = new();
-        public object Values
-        {
-            get => _values;
-            init
-            {
-                if (_values == null)
-                {
-                    _values = new Dictionary<string, object>();
-                }
-                else if(_values is Dictionary<string, object> dict)
-                {
-                    _values = dict;
-                }
-                else
-                {
-                    _values = ValueHelper.ToDictionary(_values);
-                }
-            }
-        }
-        public Dictionary<string, object> ValuesDictionary => _values;
+        /// <summary>
+        /// Optional strongly-typed or dictionary of values.
+        /// </summary>
+        public object? Values { get; init; } = null;
     }
+
 
     public static class DefaultInput
     {

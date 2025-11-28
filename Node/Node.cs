@@ -36,10 +36,9 @@ namespace Monolith.Nodes
         public Point Location { get => Shape.Location; set => Shape.Location = value; }
 
         /// <summary>
-        /// Values that come from the ogmo level dictionary, can be ignored if user is not using ogmo.
+        /// Node specific values.
         /// </summary>
-        public Dictionary<string, object> Values { get; internal set; } = new();
-
+        public object? Values { get; internal set; }
         /// <summary>
         /// Creates a new Node using a NodeConfig.
         /// </summary>
@@ -48,7 +47,7 @@ namespace Monolith.Nodes
             Parent = config.Parent;
             Shape = config.Shape;
             Name = config.Name;
-            Values = config.ValuesDictionary;
+            Values = config.Values;
 
             NodeManager.QueueAdd(this);
         }
@@ -88,16 +87,29 @@ namespace Monolith.Nodes
         }
 
         /// <summary>
-        /// Safely retrieves the strongly-typed Values object.
-        /// Throws an exception if the type does not match.
+        /// Safely get strongly-typed Values.
+        /// Works even if Values is a dictionary.
         /// </summary>
         protected T GetValues<T>() where T : class
         {
-            if (Values is T typedValues)
-                return typedValues;
+            if (Values is T typed)
+                return typed;
 
-            throw new InvalidOperationException($"Node {Name} requires Values of type {typeof(T).Name}.");
+            if (Values is Dictionary<string, object> dict)
+            {
+                var obj = Activator.CreateInstance(typeof(T)) as T 
+                        ?? throw new InvalidOperationException();
+                foreach (var prop in typeof(T).GetProperties())
+                {
+                    if (dict.TryGetValue(prop.Name, out var val))
+                        prop.SetValue(obj, val);
+                }
+                return obj;
+            }
+
+            throw new InvalidOperationException($"Node {Name} requires Values of type {typeof(T).Name}");
         }
+
 
         /// <summary>
         /// Clears the node's data to help with memory management.
@@ -107,7 +119,6 @@ namespace Monolith.Nodes
             Parent = null;
             Shape = null;
             Name = null;
-            Values?.Clear();
             Values = null;
         }
 
