@@ -11,8 +11,4 @@
   <ItemGroup>
     <ProjectReference Include="../../MonoPaper/Project.csproj" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
 </Project>

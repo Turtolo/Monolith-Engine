@@ -30,15 +30,36 @@ namespace Monolith.Nodes
         /// </summary>
         public string Name { get; set; }
 
-        /// <summary>
-        /// The location of the node.
-        /// </summary>
-        public Point Location { get => Shape.Location; set => Shape.Location = value; }
+        private Vector2 _position;
 
         /// <summary>
-        /// Node specific values.
+        /// The current position of the node, linked with the shape's location.
         /// </summary>
-        public object? Values { get; internal set; }
+        public Vector2 Position
+        {
+            get => _position;
+            set
+            {
+                var delta = value - _position;
+                _position = value;
+
+                if (Shape != null)
+                {
+                    Shape.Location = new Point(
+                        (int)MathF.Round(_position.X),
+                        (int)MathF.Round(_position.Y)
+                    );
+                }
+
+                foreach (var child in GetChildren())
+                {
+                    child.Position += delta;
+                }
+            }
+        }
+
+
+
         /// <summary>
         /// Creates a new Node using a NodeConfig.
         /// </summary>
@@ -46,11 +67,20 @@ namespace Monolith.Nodes
         {
             Parent = config.Parent;
             Shape = config.Shape;
-            Name = config.Name;
-            Values = config.Values;
+            Name = config.Name ?? GetType().Name;
+
+            _position = Shape != null 
+                ? new Vector2(Shape.Location.X, Shape.Location.Y)
+                : (config.Position ?? Vector2.Zero);
+
+            if (Shape != null)
+                Shape.Location = new Point((int)MathF.Round(_position.X), (int)MathF.Round(_position.Y));
 
             NodeManager.QueueAdd(this);
         }
+
+
+
 
         /// <summary>
         /// Queues a node for removal from the main instance list and clears its data.
@@ -87,31 +117,6 @@ namespace Monolith.Nodes
         }
 
         /// <summary>
-        /// Safely get strongly-typed Values.
-        /// Works even if Values is a dictionary.
-        /// </summary>
-        protected T GetValues<T>() where T : class
-        {
-            if (Values is T typed)
-                return typed;
-
-            if (Values is Dictionary<string, object> dict)
-            {
-                var obj = Activator.CreateInstance(typeof(T)) as T 
-                        ?? throw new InvalidOperationException();
-                foreach (var prop in typeof(T).GetProperties())
-                {
-                    if (dict.TryGetValue(prop.Name, out var val))
-                        prop.SetValue(obj, val);
-                }
-                return obj;
-            }
-
-            throw new InvalidOperationException($"Node {Name} requires Values of type {typeof(T).Name}");
-        }
-
-
-        /// <summary>
         /// Clears the node's data to help with memory management.
         /// </summary>
         internal void ClearNodeData()
@@ -119,7 +124,6 @@ namespace Monolith.Nodes
             Parent = null;
             Shape = null;
             Name = null;
-            Values = null;
         }
 
         public virtual void Load() { }
@@ -132,7 +136,8 @@ namespace Monolith.Nodes
         /// </summary>
         public void DrawShape(Color color, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
         {
-            DrawHelper.DrawRegionShape(Shape, color, layerDepth, layer);
+            if (Shape != null)
+                DrawHelper.DrawRegionShape(Shape, color, layerDepth, layer);
         }
 
         /// <summary>
@@ -140,7 +145,8 @@ namespace Monolith.Nodes
         /// </summary>
         public void DrawShapeHollow(Color color, int thickness = 2, float layerDepth = 0.1f, DrawLayer layer = DrawLayer.Middleground)
         {
-            DrawHelper.DrawRegionShapeHollow(Shape, color, thickness, layerDepth, layer);
+            if (Shape != null)
+                DrawHelper.DrawRegionShapeHollow(Shape, color, thickness, layerDepth, layer);
         }
     }
 }

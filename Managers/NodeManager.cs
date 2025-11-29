@@ -80,12 +80,14 @@ namespace Monolith.Managers
             for (int i = 0; i < allInstances.Count; i++)
             {
                 Node n = allInstances[i];
-                if (n.Parent is Node)
+
+                if (n.Parent == node)
                     nodes.Add(n);
             }
 
             return nodes;
         }
+
 
         /// <summary>
         /// Returns the current parrent of this node.

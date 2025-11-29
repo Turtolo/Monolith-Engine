@@ -109,41 +109,49 @@ namespace Monolith.IO
                 .Where(l => l.entities != null)
                 .SelectMany(l => l.entities))
             {
-                Dictionary<string, object> normalDict = entity.values != null 
-                    ? ParseValues(entity.values) 
-                    : new Dictionary<string, object>();
-
-                Type type = AppDomain.CurrentDomain.GetAssemblies()
+                Type nodeType = AppDomain.CurrentDomain.GetAssemblies()
                     .SelectMany(a =>
                     {
-                        try
-                        {
-                            return a.GetTypes();
-                        }
-                        catch (ReflectionTypeLoadException ex)
-                        {
-                            return ex.Types.Where(t => t != null);
-                        }
+                        try { return a.GetTypes(); }
+                        catch (ReflectionTypeLoadException ex) { return ex.Types.Where(t => t != null); }
                     })
                     .FirstOrDefault(t => t.IsSubclassOf(typeof(Node)) && t.Name == entity.name);
 
-                if (type != null)
+                if (nodeType == null)
                 {
-                    var obj = (Node)Activator.CreateInstance(type, new NodeConfig
-                    {
-                        Parent = Engine.SceneManager.GetCurrentScene(),
-                        Shape = new RectangleShape2D(entity.x, entity.y, entity.width, entity.height),
-                        Name = entity.name,
-                        Values = normalDict
-                    });
-                    Console.WriteLine(Engine.SceneManager.GetCurrentScene());
+                    Console.WriteLine($"Type '{entity.name}' not found or not a subclass of Node.");
+                    continue;
                 }
-                else
+
+                Node node = (Node)Activator.CreateInstance(nodeType, new NodeConfig
                 {
-                    Console.WriteLine($"Type '{entity.name}' not found or not a subclass of node.");
+                    Parent = Engine.SceneManager.GetCurrentScene(),
+                    Shape = new RectangleShape2D(entity.x, entity.y, entity.width, entity.height),
+                    //Position = new Vector2(entity.x, entity.y),
+                    Name = entity.name
+                });
+
+                if (entity.values != null)
+                {
+                    var dict = ParseValues(entity.values);
+
+                    foreach (var kv in dict)
+                    {
+                        var prop = nodeType.GetProperty(kv.Key);
+
+                        if (prop != null && prop.CanWrite)
+                        {
+                            object val = kv.Value;
+
+                            val = Convert.ChangeType(val, prop.PropertyType);
+
+                            prop.SetValue(node, val);
+                        }
+                    }
                 }
             }
         }
+
 
         /// <summary>
         /// Creates a tilemap from the level's data list, uses the texture region system to make it work with atlases. 
@@ -178,12 +186,37 @@ namespace Monolith.IO
                     {
                         int index = row * layer.gridCellsX + col;
                         int tile = (index >= 0 && index < layer.data.Count) ? layer.data[index] : 0;
-                        tilemap.SetTile(col, row, tile == -1 ? 0 : tile);
+                        tilemap.SetTile(col, row, tile);
                     }
                 }
 
                 tilemap.LayerDepth = float.Parse(layer.name, CultureInfo.InvariantCulture);
             }
+        }
+
+        public static object ApplyValuesToTarget(List<object> values, Type targetType)
+        {
+            object target = Activator.CreateInstance(targetType);
+
+            foreach (var valueObj in values)
+            {
+                if (valueObj == null) continue;
+
+                var srcProps = valueObj.GetType().GetProperties();
+                
+                foreach (var srcProp in srcProps)
+                {
+                    var destProp = targetType.GetProperty(srcProp.Name);
+                    if (destProp != null &&
+                        destProp.CanWrite &&
+                        destProp.PropertyType.IsAssignableFrom(srcProp.PropertyType))
+                    {
+                        destProp.SetValue(target, srcProp.GetValue(valueObj));
+                    }
+                }
+            }
+
+            return target;
         }
         
         /// <summary>

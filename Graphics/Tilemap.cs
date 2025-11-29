@@ -25,7 +25,11 @@ namespace Monolith.Graphics
             Rows = rows;
             Columns = columns;
             Count = Columns * Rows;
+
+            // Initialize all tiles as empty (-1)
             _tiles = new int[Count];
+            for (int i = 0; i < Count; i++)
+                _tiles[i] = -1;
 
             Engine.DrawManager.Tilemaps.Add(this);
         }
@@ -55,6 +59,11 @@ namespace Monolith.Graphics
             for (int i = 0; i < Count; i++)
             {
                 int tileSetIndex = _tiles[i];
+
+                // Skip empty tiles
+                if (tileSetIndex < 0)
+                    continue;
+
                 MTexture tile = _tileset.GetTile(tileSetIndex);
 
                 int x = i % Columns;

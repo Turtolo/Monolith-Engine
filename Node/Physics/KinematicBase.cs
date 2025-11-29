@@ -54,7 +54,7 @@ namespace Monolith.Nodes
 
                 if (!IsColliding(test))
                 {
-                    Shape.Offset(sign, 0);
+                    Position += new Vector2(sign, 0);
                 }
                 else
                 {
@@ -78,7 +78,7 @@ namespace Monolith.Nodes
 
                 if (!IsColliding(test))
                 {
-                    Shape.Offset(0, sign);
+                    Position += new Vector2(0, sign);
                 }
                 else
                 {

@@ -141,28 +141,29 @@ namespace Monolith
         public string TilemapTexturePath {get; init; } = null;
     }
 
-    public record class NodeConfig
+    public class NodeConfig
     {
         /// <summary>
-        /// The object that the node is instantiated within.
+        /// Optional parent object.
         /// </summary>
-        public required object Parent { get; init; }
+        public object Parent { get; set; }
 
         /// <summary>
-        /// The shape of the node.
+        /// Optional shape for the node.
         /// </summary>
-        public required IRegionShape2D Shape { get; init; }
+        public IRegionShape2D Shape { get; set; }
 
         /// <summary>
-        /// The name of the node.
+        /// Optional name. Defaults to the node class name.
         /// </summary>
-        public required string Name { get; init; }
+        public string Name { get; set; }
 
         /// <summary>
-        /// Optional strongly-typed or dictionary of values.
+        /// Optional position for the node. Defaults to Vector2.Zero.
         /// </summary>
-        public object? Values { get; init; } = null;
+        public Vector2? Position { get; set; }
     }
+
 
 
     public static class DefaultInput
