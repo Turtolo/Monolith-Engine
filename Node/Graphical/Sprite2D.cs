@@ -6,7 +6,7 @@ using Monolith;
 
 namespace Monolith.Nodes
 {   
-    public class Sprite2D : Node
+    public class Sprite2D : ValueNode<Sprite2D.ValuesData>
     {
         public record ValuesData
         (
@@ -15,7 +15,7 @@ namespace Monolith.Nodes
             float Rotation = 0f,
             Color Modulate = default
         );
-        
+
         public MTexture Texture { get; private set; }
         public Color Modulate { get; set; } = Color.White;
         public Vector2 Scale { get; set; } = Vector2.One;
@@ -23,12 +23,10 @@ namespace Monolith.Nodes
 
         public Sprite2D(NodeConfig config) : base(config)
         {
-            var values = GetValues<ValuesData>();
-
-            Texture = values.Texture;
-            Scale = values.Scale;
-            Rotation = values.Rotation;
-            Modulate = values.Modulate;
+            Texture = Values.Texture;
+            Scale = Values.Scale;
+            Rotation = Values.Rotation;
+            Modulate = Values.Modulate;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -44,5 +42,6 @@ namespace Monolith.Nodes
             );
         }
     }
+
 
 }
