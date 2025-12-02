@@ -20,8 +20,9 @@ namespace Monolith.IO
         private readonly HashSet<string> _loadedRelativePaths = new();
         private readonly string _rawContentPath;
         private readonly bool _allowAbsolutePaths;
-        private bool _canReload;
-        private bool _waitForReload;
+
+        private readonly Dictionary<Type, Func<string, object>> _genericLoaders =
+            new Dictionary<Type, Func<string, object>>();
 
         /// <summary>
         /// Creates a new RuntimeContentLoader
@@ -32,11 +33,43 @@ namespace Monolith.IO
         /// Intended for non release builds as the pipeline produces cleaner and faster files,
         /// release builds also need to have all files relative to the game's exe.
         /// </remarks>
+
         public RuntimeContentLoader(string rawContentPath, bool allowAbsolutePaths = false)
         {
-            _rawContentPath = rawContentPath ?? throw new ArgumentNullException(nameof(rawContentPath));
+            _rawContentPath = rawContentPath;
             _allowAbsolutePaths = allowAbsolutePaths;
+
+            // Register generic loaders
+            _genericLoaders[typeof(Texture2D)] = p => LoadTexture(p);
+            _genericLoaders[typeof(SoundEffect)] = p => LoadSound(p);
+            _genericLoaders[typeof(Song)] = p => LoadMusic(p);
+            _genericLoaders[typeof(string)] = p => LoadText(p);
+            _genericLoaders[typeof(byte[])] = p => LoadRaw(p);
         }
+
+        /// <summary>
+        /// Generic loader for runtime.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException"></exception>
+        public T Load<T>(string path)
+        {
+            if (_genericLoaders.TryGetValue(typeof(T), out var loader))
+            {
+                return (T)loader(path);
+            }
+
+            if (!typeof(T).IsPrimitive && typeof(T) != typeof(string))
+            {
+                return LoadJson<T>(path);
+            }
+
+            throw new NotSupportedException($"No loader registered for type {typeof(T).Name}");
+        }
+
+
 
         /// <summary>
         /// Normalizes a given path.

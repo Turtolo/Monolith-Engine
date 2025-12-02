@@ -138,6 +138,23 @@ namespace Monolith.Managers
             return allInstancesDetailed.TryGetValue(name, out var nodes) ? nodes : Array.Empty<Node>();
         }
 
+        public static T GetNodeByType<T>() where T : Node
+        {
+            return allInstancesDetailed
+                .SelectMany(kvp => kvp.Value)
+                .OfType<T>()
+                .FirstOrDefault();
+        }
+
+        public static IReadOnlyList<T> GetNodesByType<T>() where T : Node
+        {
+            return allInstancesDetailed
+                .SelectMany(kvp => kvp.Value)
+                .OfType<T>()
+                .ToList();
+        }
+
+
         public static IReadOnlyList<Node> AllInstances => allInstances.AsReadOnly();
 
         public static IReadOnlyDictionary<string, IReadOnlyList<Node>> AllInstancesDetailed =>

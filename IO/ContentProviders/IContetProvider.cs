@@ -23,9 +23,12 @@ namespace Monolith.IO
         Effect LoadEffect(string path);
         byte[] LoadRaw(string path);
 
+        T Load<T>(string path); 
+
         void Unload(string path);
         void ClearCache();
         void ReloadAll();
     }
+
 
 }

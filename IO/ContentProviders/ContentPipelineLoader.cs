@@ -14,8 +14,40 @@ namespace Monolith.IO
     public class ContentPipelineLoader : IContentProvider
     {
 
-        public ContentPipelineLoader() {}
-        
+        private readonly Dictionary<Type, Func<string, object>> _genericLoaders =
+            new Dictionary<Type, Func<string, object>>();
+
+        public ContentPipelineLoader()
+        {
+            _genericLoaders[typeof(Texture2D)] = p => LoadTexture(p);
+            _genericLoaders[typeof(SoundEffect)] = p => LoadSound(p);
+            _genericLoaders[typeof(Song)] = p => LoadMusic(p);
+            _genericLoaders[typeof(SpriteFont)] = p => LoadFont(p);
+            _genericLoaders[typeof(Effect)] = p => LoadEffect(p);
+            _genericLoaders[typeof(byte[])] = p => LoadRaw(p);
+
+            _genericLoaders[typeof(string)] = p => LoadText(p);
+        }
+
+        /// <summary>
+        /// Generic loader for the content pipeline.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException"></exception>
+        public T Load<T>(string path)
+        {
+            if (_genericLoaders.TryGetValue(typeof(T), out var loader))
+                return (T)loader(path);
+
+            if (!typeof(T).IsPrimitive && typeof(T) != typeof(string))
+                return LoadJson<T>(path);
+
+            throw new NotSupportedException($"No loader registered for type {typeof(T).Name}");
+        }
+
+
         /// <summary>
         /// Loads a texture using the content pipeline.
         /// </summary>

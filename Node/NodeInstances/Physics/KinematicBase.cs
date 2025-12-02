@@ -7,7 +7,7 @@ using Monolith.Managers;
 
 namespace Monolith.Nodes
 {
-    public record class KinematicBody2DConfig : SpatialNodeConfig
+    public record class KinematicBaseConfig : SpatialNodeConfig
     {
         
     }
@@ -20,7 +20,7 @@ namespace Monolith.Nodes
         private float remainderY = 0;
         public bool Locked;
 
-        public KinematicBody2D(KinematicBody2DConfig config) : base(config) {}
+        public KinematicBody2D(KinematicBaseConfig config) : base(config) {}
         
         public void UpdateKinematicBody()
         {
@@ -113,6 +113,8 @@ namespace Monolith.Nodes
 
             foreach (var body in NodeManager.AllInstances.OfType<StaticBody2D>())
             {
+                if (body.Collidable == false) return false;
+                
                 var Region = body.Region;
 
                 if (left.Intersects(Region) || right.Intersects(Region))
@@ -127,6 +129,8 @@ namespace Monolith.Nodes
         {
             foreach (var body in NodeManager.AllInstances.OfType<StaticBody2D>())
             {
+                if (body.Collidable == false) return false;
+                
                 if (Region.Intersects(body.Region))
                     return true;
             }

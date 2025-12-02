@@ -57,7 +57,7 @@ namespace Monolith
         /// Whether the game starts in fullscreen mode.
         /// Default: true
         /// </summary>
-        public bool Fullscreen { get; init; } = true;
+        public bool Fullscreen { get; init; } = false;
 
         /// <summary>
         /// Wheter the game starts in debug mode.
