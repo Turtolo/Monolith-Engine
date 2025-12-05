@@ -22,7 +22,7 @@ namespace Monolith.Nodes
     }
 
 
-    public abstract class Node2D : Node
+    public class Node2D : Node
     {
         private Vector2 _position;
 

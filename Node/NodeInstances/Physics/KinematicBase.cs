@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Linq;
 using Monolith.Managers;
+using System.Drawing;
 
 namespace Monolith.Nodes
 {
@@ -120,7 +121,7 @@ namespace Monolith.Nodes
 
             foreach (var body in NodeManager.AllInstances.OfType<StaticBody2D>())
             {
-                if (body.Collidable == false) return false;
+                if (body.Collidable == false) continue;
                 
                 var Region = body.Region;
 
@@ -136,7 +137,7 @@ namespace Monolith.Nodes
         {
             foreach (var body in NodeManager.AllInstances.OfType<StaticBody2D>())
             {
-                if (body.Collidable == false) return false;
+                if (body.Collidable == false) continue;
                 
                 if (Region.Intersects(body.Region))
                     return true;

@@ -10,7 +10,7 @@ namespace Monolith.Nodes
         public bool Collidable { get; set; } = true;
         public bool OneWay { get; set; }
     }
-    public class StaticBody2D : Node2D, ICollidable2D
+    public class StaticBody2D : Node2D
     {
         public bool Collidable { get; set; }
         public bool OneWay { get; set; }
