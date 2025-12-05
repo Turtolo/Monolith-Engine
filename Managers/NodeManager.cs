@@ -15,7 +15,10 @@ namespace Monolith.Managers
         private static readonly List<Node> pendingAdds = new();
         private static readonly List<Node> pendingRemovals = new();
 
-        internal static void QueueAdd(Node node) => pendingAdds.Add(node);
+        internal static void QueueAdd(Node node)
+        {
+            pendingAdds.Add(node);
+        }
         internal static void QueueRemove(Node node) => pendingRemovals.Add(node);
 
         private static void ApplyPendingChanges()
@@ -63,6 +66,36 @@ namespace Monolith.Managers
         public static Node GetNodeParent(Node node) => node.Parent;
 
         /// <summary>
+        /// Sets all the nodes in a node's config to be children of that node.
+        /// </summary>
+        /// <param name="parent"></param>
+        private static void AutoAssignChildNodes(Node parent)
+        {
+            var config = parent.Config;
+            if (config == null)
+                return;
+
+            var properties = config.GetType().GetProperties();
+
+            foreach (var prop in properties)
+            {
+                var value = prop.GetValue(config);
+
+                if (value is Node child)
+                {
+                    child.SetParent(parent);
+                }
+
+                if (value is IEnumerable<Node> list)
+                {
+                    foreach (var c in list)
+                        c.SetParent(parent);
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Removes a specified node.
         /// </summary>
         /// <param name="node"></param>
@@ -93,12 +126,19 @@ namespace Monolith.Managers
         public static void LoadNodes()
         {
             ApplyPendingChanges();
+
+            foreach (var node in allInstances.ToList())
+            {
+                AutoAssignChildNodes(node);
+            }
+
             foreach (var node in allInstances.ToList())
             {
                 node.Load();
                 ApplyPendingChanges();
             }
         }
+
 
         /// <summary>
         /// Unloads all the nodes

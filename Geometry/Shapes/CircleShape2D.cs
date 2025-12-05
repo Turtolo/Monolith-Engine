@@ -8,6 +8,13 @@ namespace Monolith.Geometry
         public Point Location { get; set; }
         public int Radius { get; set; }
 
+
+        public CircleShape2D(int radius)
+        {
+            Location = Point.Zero;
+            Radius = radius;
+        }
+
         public CircleShape2D(int x, int y, int radius)
         {
             Location = new Point(x, y);

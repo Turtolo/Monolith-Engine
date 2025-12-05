@@ -31,6 +31,8 @@ namespace Monolith.Nodes
         /// </summary>
         public IRegionShape2D Region { get; set; }
 
+        public event Action<Vector2> PositionChanged;
+
         /// <summary>
         /// The current position of the node, linked with the shape's location.
         /// Propagates delta to all children.
@@ -51,6 +53,8 @@ namespace Monolith.Nodes
                     if (child is Node2D c2d)
                         c2d.Position += delta;
                 }
+
+                PositionChanged?.Invoke(_position);
             }
         }
 

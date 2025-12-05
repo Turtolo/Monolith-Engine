@@ -11,6 +11,7 @@ using Monolith.Nodes;
 using Monolith.Geometry;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Monlith.Nodes;
 
 namespace Monolith.IO
 {
@@ -85,11 +86,16 @@ namespace Monolith.IO
                 
                 foreach (var e in l.entities)
                 {
-                    new StaticBody2D(new StaticBodyConfig
+                    var staticbody = new StaticBody2D(new StaticBodyConfig
                     {
                         Parent = null,
                         Name = e.name,
-                        Region = new RectangleShape2D(e.x, e.y, e.width, e.height)
+                        CollisionShape2D = new CollisionShape2D(new CollisionShapeConfig
+                        {
+                            Parent = null,
+                            Shape = new RectangleShape2D(e.x, e.y, e.width, e.height),
+                            Name = "CollisionShape2D"
+                        })
                     });
                 }
             }

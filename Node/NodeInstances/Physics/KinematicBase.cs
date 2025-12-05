@@ -5,17 +5,20 @@ using System;
 using System.Linq;
 using Monolith.Managers;
 using System.Drawing;
+using Monlith.Nodes;
 
 namespace Monolith.Nodes
 {
     public record class KinematicBaseConfig : SpatialNodeConfig
     {
-        
+        public CollisionShape2D CollisionShape2D { get; set; }
     }
 
     public class KinematicBody2D : Node2D
     {
         public Vector2 Velocity;
+
+        public CollisionShape2D CollisionShape2D { get; set; }
 
         internal Vector2 PriorityVelocity;
 
@@ -23,7 +26,10 @@ namespace Monolith.Nodes
         private float remainderY = 0;
         public bool Locked;
 
-        public KinematicBody2D(KinematicBaseConfig config) : base(config) {}
+        public KinematicBody2D(KinematicBaseConfig cfg) : base(cfg)
+        {
+            CollisionShape2D = cfg.CollisionShape2D;
+        }
         
         public void UpdateKinematicBody()
         {
@@ -62,7 +68,7 @@ namespace Monolith.Nodes
 
             while (amount != 0)
             {
-                var test = Region.Clone();
+                var test = CollisionShape2D.Shape.Clone();
                 test.Offset(sign, 0);
 
                 if (!IsColliding(test))
@@ -86,7 +92,7 @@ namespace Monolith.Nodes
 
             while (amount != 0)
             {
-                var test = Region.Clone();
+                var test = CollisionShape2D.Shape.Clone();
                 test.Offset(0, sign);
 
                 if (!IsColliding(test))
@@ -105,7 +111,7 @@ namespace Monolith.Nodes
 
         public bool IsOnGround()
         {
-            var test = Region.Clone();
+            var test = CollisionShape2D.Shape.Clone();
             test.Offset(0, 1);
             return IsColliding(test);
         }
@@ -113,19 +119,19 @@ namespace Monolith.Nodes
 
         public bool IsOnWall()
         {
-            var left = Region.Clone();
+            var left = CollisionShape2D.Shape.Clone();
             left.Offset(-1, 0);
 
-            var right = Region.Clone();
+            var right = CollisionShape2D.Shape.Clone();
             right.Offset(1, 0);
 
             foreach (var body in NodeManager.AllInstances.OfType<StaticBody2D>())
             {
-                if (body.Collidable == false) continue;
+                if (body.CollisionShape2D.Disabled == true) continue;
                 
-                var Region = body.Region;
+                var shape = body.CollisionShape2D.Shape;
 
-                if (left.Intersects(Region) || right.Intersects(Region))
+                if (left.Intersects(shape) || right.Intersects(shape))
                     return true;
             }
 
@@ -137,9 +143,9 @@ namespace Monolith.Nodes
         {
             foreach (var body in NodeManager.AllInstances.OfType<StaticBody2D>())
             {
-                if (body.Collidable == false) continue;
+                if (body.CollisionShape2D.Disabled == true) continue;
                 
-                if (Region.Intersects(body.Region))
+                if (Region.Intersects(body.CollisionShape2D.Shape))
                     return true;
             }
 

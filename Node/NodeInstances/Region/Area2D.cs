@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Monlith.Nodes;
 using Monolith;
 using Monolith.Managers;
 using Monolith.Nodes;
@@ -8,30 +10,39 @@ public record class AreaConfig : SpatialNodeConfig
 {
     public bool MonitorAreas { get; set; }
     public bool MonitorBodies { get; set; }
+    public CollisionShape2D CollisionShape2D { get; set; }
 }
 
 public class Area2D : Node2D
 {
     private bool wasInArea2D = false;
 
-    private static readonly Type[] AcceptedAreaType = 
+    private static readonly Type[] AcceptedType = 
     {
         typeof(Area2D),
         typeof(KinematicBody2D),
     };
 
-    public Area2D(AreaConfig config) : base(config)
+    public bool MonitorAreas { get; set; }
+    public bool MonitorBodies { get; set; }
+    public CollisionShape2D CollisionShape2D { get; set; }
+
+    public Area2D(AreaConfig cfg) : base(cfg)
     {
-        
+        CollisionShape2D = cfg.CollisionShape2D;
+        MonitorAreas = cfg.MonitorAreas;
+        MonitorBodies = cfg.MonitorBodies;
     }
 
     private Node2D GetOverlappingArea()
     {
-        return NodeManager.AllInstances
-            .Where(a => a != this && AcceptedAreaType.Any(t => t.IsAssignableFrom(a.GetType())))
-            .Cast<Node2D>()
-            .FirstOrDefault(a => Region.Intersects(a.Region));
+        return NodeManager.GetNodesByType<CollisionShape2D>()
+            .Where(c => c.Parent != this)
+            .Where(c => AcceptedType.Any(t => t.IsAssignableFrom(c.Parent.GetType())))
+            .FirstOrDefault(c => c.Shape.Intersects(CollisionShape2D.Shape))
+            ?.Parent as Node2D;
     }
+
 
     private KinematicBody2D GetOverlappingBody()
     {

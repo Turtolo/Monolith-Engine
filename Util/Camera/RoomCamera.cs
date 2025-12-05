@@ -47,13 +47,13 @@ namespace Monolith.Util
             CameraRectangle.Height = (int)(cfg.RenderHeight / Zoom);
         }
         
-        
-        public void Follow(Node2D targetNode)
+
+        public void Follow(KinematicBody2D body2D)
         {
             var cfg = Engine.Instance.Config;
-            if (targetNode == null) return;
+            if (body2D == null) return;
 
-            var side = CollisionHelper.GetCameraEdge(targetNode.Region, CameraRectangle);
+            var side = CollisionHelper.GetCameraEdge(body2D.CollisionShape2D.Shape, CameraRectangle);
 
             if (!Entered)
             {
@@ -62,11 +62,9 @@ namespace Monolith.Util
                     cameraTargetPosition.X = CameraRectangle.X - CameraRectangle.Width + CameraRectangle.Width / 2;
                     CameraRectangle.X -= CameraRectangle.Width;
 
-                    if (targetNode is KinematicBody2D body2D)
-                    {
-                        body2D.Locked = true;
-                        body2D.Region.Offset(-10, 0);
-                    }
+                    body2D.Locked = true;
+                    body2D.Region.Offset(-10, 0);
+                    
 
                     cameraXTween = new Tween(
                         0.5f,
@@ -74,8 +72,7 @@ namespace Monolith.Util
                         t => cameraPosition.X = MathHelper.Lerp(cameraPosition.X, cameraTargetPosition.X, t),
                         () =>
                         {
-                            if (targetNode is KinematicBody2D body2D)
-                                body2D.Locked = false;
+                            body2D.Locked = false;
                         }
 
                     );
@@ -88,12 +85,10 @@ namespace Monolith.Util
                 {
                     cameraTargetPosition.X = CameraRectangle.X + CameraRectangle.Width + CameraRectangle.Width / 2;
                     CameraRectangle.X += CameraRectangle.Width;
+           
+                    body2D.Locked = true;
+                    body2D.Region.Offset(10, 0);
                     
-                    if (targetNode is KinematicBody2D body2D)
-                    {
-                        body2D.Locked = true;
-                        body2D.Region.Offset(10, 0);
-                    }
 
                     cameraXTween = new Tween(
                         0.5f,
@@ -101,8 +96,7 @@ namespace Monolith.Util
                         t => cameraPosition.X = MathHelper.Lerp(cameraPosition.X, cameraTargetPosition.X, t),
                         () =>
                         {
-                            if (targetNode is KinematicBody2D body2D)
-                                body2D.Locked = false;
+                            body2D.Locked = false;
                         }
                     );
                     cameraXTween.Start();

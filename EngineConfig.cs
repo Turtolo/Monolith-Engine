@@ -154,12 +154,12 @@ namespace Monolith
         /// <summary>
         /// Optional parent object.
         /// </summary>
-        public required Node Parent { get; set; }
+        public Node Parent { get; set; }
 
         /// <summary>
         /// Optional name. Defaults to the node class name.
         /// </summary>
-        public required string Name { get; set; }
+        public string Name { get; set; }
     }
 
     public static class DefaultInput

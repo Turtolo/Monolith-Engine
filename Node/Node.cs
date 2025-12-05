@@ -12,6 +12,8 @@ namespace Monolith.Nodes
     public abstract class Node
     {
         private readonly List<Node> children = new();
+        
+        public NodeConfig Config { get; }
 
         /// <summary>
         /// The parent node in the hierarchy, required to be set, can be null
@@ -28,10 +30,15 @@ namespace Monolith.Nodes
         /// </summary>
         public Node(NodeConfig config)
         {
-            Name = config.Name ?? GetType().Name;
+            if (config.Name != null)
+                Name = config.Name;
+            else 
+                Name = ToString();
 
             if (config.Parent != null)
                 SetParent(config.Parent);
+            
+            Config = config;
 
             NodeManager.QueueAdd(this);
         }
